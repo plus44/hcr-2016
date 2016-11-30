@@ -12,7 +12,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 # USER LIBRARIES
 
 # GLOBAL VARIABLES
-PORT_NUMBER = 8080
+PORT_NUMBER = 80
 SERVER_DIR = os.path.dirname(os.path.realpath(__file__)) + sep + 'www'
 
 # CLASSES
