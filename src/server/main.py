@@ -15,7 +15,7 @@ import enums
 from thread_mgr import ThreadManager
 
 # GLOBAL VARIABLES
-PORT_NUMBER = 8080
+PORT_NUMBER = 80
 SERVER_DIR = os.path.dirname(os.path.realpath(__file__)) + sep + 'www'
 
 # CLASSES
