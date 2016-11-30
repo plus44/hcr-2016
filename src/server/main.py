@@ -5,11 +5,14 @@
 # STANDARD PYTHON IMPORTS
 import os
 from os import sep
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 # PYTHON LIBRARIES
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from SocketServer import ThreadingMixIn
 
 # USER LIBRARIES
+import enums
+from thread_mgr import ThreadManager
 
 # GLOBAL VARIABLES
 PORT_NUMBER = 8080
@@ -17,9 +20,17 @@ SERVER_DIR = os.path.dirname(os.path.realpath(__file__)) + sep + 'www'
 
 # CLASSES
 class RequestHandler(BaseHTTPRequestHandler):
+	''' Handles HTTP requests to the server
+	'''
+	def __init__(self, thread_mgr, *args):
+		''' Initialise handler instance variables
+		'''
+		self._thread_mgr = thread_mgr
+		BaseHTTPRequestHandler.__init__(self, *args)
 
-	# Handler for GET requests
 	def do_GET(self):
+		''' Handler for GET requests to the server.
+		'''
 		if self.path == '/':
 			self.path = '/index.html'
 
@@ -44,13 +55,25 @@ class RequestHandler(BaseHTTPRequestHandler):
 		except IOError:
 			self.send_error(404, "File not found: %s" % self.path)
 
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+	''' Handle requests in a separate thread
+	'''
+
 # FUNCTIONS
 def main():
 	try:
+		# Create a global thread manager for all our devices
+		thread_mgr = ThreadManager()
+
+		def handler(*args):
+			''' Initialise our custom handler with the global thread manager.
+			'''
+			RequestHandler(thread_mgr, *args)
+
 		# Create a web server and define the handler to manage the incoming 
-		# request
-		server = HTTPServer(('', PORT_NUMBER), RequestHandler)
-		print "Started HTTPServer on port %d" % PORT_NUMBER
+		# requests on separate threads.
+		server = ThreadedHTTPServer(('', PORT_NUMBER), handler)
+		print "Started ThreadedHTTPServer on port %d" % PORT_NUMBER
 
 		# Wait forever for incoming HTTP requests
 		server.serve_forever()
@@ -64,3 +87,5 @@ if __name__ == '__main__':
 	main()
 else:
 	print "This file is meant to be run as main."
+
+# END OF FILE
