@@ -15,6 +15,7 @@ from collections import deque
 # USER LIBRARIES
 import enums
 from thread_mgr import ThreadManager
+from state_mgr import StateManager
 from common import constants
 
 # GLOBAL VARIABLES
@@ -33,12 +34,16 @@ class Device():
 
 	def long_poll(self):
 		''' With the device lock and does not return until either the 
-		LONG_POLL_TIMEOUT has passed (returning False) or the device is
-		self.ready_to_return() (returning the recorded self.ret_val).
+		LONG_POLL_TIMEOUT has passed or the device is self.ready_to_return().
+
+		Returns False if timed out.
+		Returns self.ret_val if actually ready_to_return.
 		'''
 		if self._thread_mgr.acquire_dev_lock(self._dev):
 			try:
-				# Do nothing until ready_to_return() is true
+				# Store the current time
+				self.time = time.time()
+				# Do nothing until ready_to_return() is true or timed out
 				while not self.ready_to_return() and \
 					((time.time() - self.time) < LONG_POLL_TIMEOUT):
 					pass
@@ -58,13 +63,27 @@ class Device():
 		manager. If it's empty, it returns false. If there's something to do, 
 		it returns true.
 		'''
-		if (len(self._state_mgr.dev_que[self._dev]) == 0):
+		if self._state_mgr.get_queue_len(self._dev) == 0:
+			# Empty the return value
+			self.ret_val = ""
 			return False
 		else:
-			self.ret_val = self._state_mgr.dev_que[self._dev].popleft()
+			# Set the return value to the item popped from the queue
+			self.ret_val = self._state_mgr.pop_from_queue(self._dev)
 			return True
 
 	def handle_post(self, body):
+		''' Begin handling a post request by trying to parse the JSON string 
+		from the body of the request.
+		'''
+		try:
+			p_json = json.loads(body)
+			self._handle_post(p_json)
+		except:
+			print "Failed parsing %s POST request body as JSON: %s" % \
+				(EnumDevice.get_name[self._dev], body)
+
+	def _handle_post(self, p_json):
 		''' Override this function in classes that inherit from Device.
 		'''
 		# Add the body of the received post request to the corresponding device
@@ -77,24 +96,84 @@ class RaspberryPi(Device):
 	def __init__(self, thread_mgr, state_mgr):
 		Device.__init__(self, thread_mgr, state_mgr, EnumDevice.PI)
 
-
-	def handle_post(self, body):
+	def _handle_post(self, p_json):
 		''' If there was no error with turning, add a takePicture item to the
 		device queue of the phone, otherwise add a turnPage item to the Pi's
 		device queue.
 		'''
-		try:
-			parsed = json.loads(body)
-			if parsed["doneTurning"] == True and \
-				parsed["error"] == "None":
+		if p_json["doneTurning"] == True and \
+			p_json["error"] == "None":
+			# Tell the phone to take a picture.
+			self._state_mgr.push_to_queue(EnumDevice.PHONE, "takePicture")
+			print "Successfully turned page on Raspberry Pi"
+		else if p_json["error"] != "None":
+			self._state_mgr.push_to_queue(EnumDevice.PI, "turnPage")
+			print "Received error: %s, from Raspberry Pi" % p_json["error"]
+			print "Re-turning page."
 
-				self.
+class Phone(Device):
+	''' Phone device class.
+	'''
+	def __init__(self, thread_mgr, state_mgr):
+		Device.__init__(self, thread_mgr, state_mgr, EnumDevice.PHONE)
 
-		except:
-			"Failed parsing Raspberry Pi body as JSON: %s" % body
-			return
+	def _handle_post(self, p_json):
+		''' If there was no error in taking a picture, add the picture content 
+		to the laptop's queue. Otherwise, add a retakePicture item to the phone
+		queue.
+		'''
+		if p_json["error"] == "None":
+			# Push the actual picture to the laptop
+			self._state_mgr.push_to_queue(EnumDevice.LAPTOP, p_json["picture"])
+			print "Successfully took a picture on the iPhone."
+		else:
+			self._state_mgr.push_to_queue(EnumDevice.PHONE, "takePicture")
+			print "Received error: %s, from the iPhone. " % p_json["error"]
+			print "Retaking picture."
 
+class Laptop(Device):
+	''' Laptop device class.
+	'''
+	def __init__(self, thread_mgr, state_mgr):
+		Device.__init__(self, thread_mgr, state_mgr, EnumDevice.LAPTOP)
 
+	def _handle_post(self, p_json):
+		''' If there was no error, add a turnPage item to the Pi's queue.
+		'''
+		if p_json["error"] == "None":
+			# Tell the Raspberry Pi to turn the page.
+			self._state_mgr.push_to_queue(EnumDevice.PI, "turnPage")
+			print "Successfully processed and spoke everything on the laptop."
+		else:
+			# Tell the laptop to retry.
+			self._state_mgr.push_to_queue(EnumDevice.LAPTOP, "retry")
+			print "Received error: %s from laptop." % p_json["error"]
+			print "Retrying laptop operations."
+
+class DeviceManager():
+	''' Container/wrapper class for the trio of devices.
+	'''
+	def __init__(self, thread_mgr, state_mgr):
+		self.devs = {EnumDevice.PI : RaspberryPi(thread_mgr, state_mgr), \
+					 EnumDevice.PHONE : Phone(thread_mgr, state_mgr), \
+					 EnumDevice.LAPTOP : Laptop(thread_mgr, state_mgr)}
+
+	def long_poll(self, dev):
+		''' Activates long-polling on a device.
+		'''
+		if dev != EnumDevice.INVALID:
+			return self.devs[dev].long_poll()
+		else:
+			print "Invalid device to long-poll."
+			return False
+
+	def handle_post(self, dev, body):
+		''' Handles a POST request on a device.
+		'''
+		if dev != EnumDevice.INVALID:
+			self.devs[dev].handle_post(body)
+		else:
+			print "Invalid device to handle POST request."
 
 # FUNCTIONS
 

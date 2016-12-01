@@ -14,46 +14,38 @@ import enums
 
 # CLASSES
 class ThreadManager:
-	''' Manages the required threads using non-blocking thread locks.
-	Every thread operation should go through the thread manager.
+	''' Manages the required threads for accessing devices using non-blocking 
+	thread locks. Every device operation should go through the thread manager.
 	'''
 	def __init__(self):
-		''' Initialises thread locks for 
+		''' Initialises thread locks for the devices
 		'''
-		self.pi_lock = threading.Lock()
-		self.phone_lock = threading.Lock()
-		self.laptop_lock = threading.Lock()
+		self.dev_lock = {EnumDevice.PI : threading.Lock(), \
+						 EnumDevice.PHONE : threading.Lock(), \
+						 EnumDevice.LAPTOP : threading.Lock()}
 
 	def acquire_dev_lock(self, dev):
 		''' Attempts to acquire the lock for a device. Returns false if already
 		locked. Call from the thread you want to acquire the lock.
 		'''
-		if dev == EnumDevice.PI:
-			return self.pi_lock.acquire(False)
-		else if dev == EnumDevice.PHONE:
-			return self.phone_lock.acquire(False)
-		else if dev == EnumDevice.LAPTOP:
-			return self.laptop_lock.acquire(False)
+		if dev != EnumDevice.INVALID:
+			return self.dev_lock[dev].acquire(False)
 		else:
-			print "Invalid device."
+			print "Invalid device to lock from ThreadManager."
 			return False
 
 	def release_dev_lock(self, dev):
 		''' Attempts to release the lock for a device. An error message will be
 		printed if the lock is unlocked. Does not return any value.
 		'''
-		try:
-			if dev == EnumDevice.PI:
-				return self.pi_lock.release()
-			else if dev == EnumDevice.PHONE:
-				return self.phone_lock.release()
-			else if dev == EnumDevice.LAPTOP:
-				return self.laptop_lock.release()
-			else:
-				print "Invalid device."
-
-		except threading.ThreadError:
-			print "Lock for device: %s unlocked." % EnumDevice.get_name(dev)
+		if dev != EnumDevice.INVALID:
+			try:
+				self.dev_lock[dev].release()
+			except threading.ThreadError:
+				print "Lock for device %s already unlocked" % \
+					EnumDevice.get_name(dev)
+		else:
+			print "Invalid device to release lock from ThreadManager."
 
 # FUNCTIONS
 

@@ -13,6 +13,8 @@ from SocketServer import ThreadingMixIn
 # USER LIBRARIES
 import enums
 from thread_mgr import ThreadManager
+from state_mgr import StateManager
+from devices import DeviceManager
 
 # GLOBAL VARIABLES
 PORT_NUMBER = 80
@@ -22,10 +24,10 @@ SERVER_DIR = os.path.dirname(os.path.realpath(__file__)) + sep + 'www'
 class RequestHandler(BaseHTTPRequestHandler):
 	''' Handles HTTP requests to the server
 	'''
-	def __init__(self, thread_mgr, *args):
+	def __init__(self, dev_mgr, *args):
 		''' Initialise handler instance variables
 		'''
-		self._thread_mgr = thread_mgr
+		self._dev_mgr = dev_mgr
 		BaseHTTPRequestHandler.__init__(self, *args)
 
 	def do_GET(self):
@@ -33,27 +35,78 @@ class RequestHandler(BaseHTTPRequestHandler):
 		'''
 		if self.path == '/':
 			self.path = '/index.html'
+			f = open(SERVER_DIR + self.path)
+			self.send_response(200)
+			self.send_header('Content-type', 'text/html')
+			self.end_headers()
+			self.wfile.write(f.read())
+			f.close()
 
-		try:
-			send_reply = False
-			if self.path.endswith('.html'):
-				mime_type = 'text/html'
-				print "Will send reply."
-				send_reply = True
-
-			if send_reply:
-				print "File path: %s" % SERVER_DIR + self.path
-				# Open the static file requested and send it
-				f = open(SERVER_DIR + self.path)
-				self.send_response(200)
-				self.send_header('Content-type', mime_type)
+		else if self.path == '/pi':
+			content = self._dev_mgr.long_poll(EnumDevice.PI)
+			if content == False:
+				# Send 204 No Content
+				self.send_response(204)
 				self.end_headers()
-				self.wfile.write(f.read())
-				f.close()
-			return
+			else:
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				self.wfile.write(content)
 
-		except IOError:
-			self.send_error(404, "File not found: %s" % self.path)
+		else if self.path == '/phone':
+			content = self._dev_mgr.long_poll(EnumDevice.PHONE)
+			if content == False:
+				# Send 204 No Content
+				self.send_response(204)
+				self.end_headers()
+			else:
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				self.wfile.write(content)
+
+		else if self.path == '/laptop':
+			content = self._dev_mgr.long_poll(EnumDevice.LAPTOP)
+			if content == False:
+				# Send 204 No Content
+				self.send_response(204)
+				self.end_headers()
+			else:
+				self.send_response(200)
+				self.send_header('Content-type', 'image/jpeg')
+				self.end_headers()
+				self.wfile.write(content)
+
+		else:
+			self.send_error(404, "Path %s does not exist." % self.path)
+
+	def do_POST(self):
+		''' Handler for POST requests to the server.
+		'''
+		# Fetch the body from the HTTP request
+		content_len = int(self.headers.getheader('Content-length', 0))
+		body = self.rfile.read(content_len)
+
+		bad_path = False
+
+		if self.path == '/pi':
+			self._dev_mgr.handle_post(EnumDevice.PI, body)
+		else if self.path == '/phone':
+			self._dev_mgr.handle_post(EnumDevice.PHONE, body)
+		else if self.path == '/laptop':
+			self._dev_mgr.handle_post(EnumDevice.LAPTOP, body)
+		else:
+			bad_path = True
+
+		if bad_path:
+			self.send_error(404, "Path %s does not exist." % self.path)
+			self.end_headers()
+		else:
+			self.send_response(200)
+			self.end_headers()
+
+
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 	''' Handle requests in a separate thread
@@ -64,11 +117,15 @@ def main():
 	try:
 		# Create a global thread manager for all our devices
 		thread_mgr = ThreadManager()
+		# Create a global state manager for handling device queues
+		state_mgr = StateManager()
+		# Initialise the device manager
+		dev_mgr = DeviceManager(thread_mgr, state_mgr)
 
 		def handler(*args):
-			''' Initialise our custom handler with the global thread manager.
+			''' Initialise our custom handler with the device manager.
 			'''
-			RequestHandler(thread_mgr, *args)
+			RequestHandler(dev_mgr *args)
 
 		# Create a web server and define the handler to manage the incoming 
 		# requests on separate threads.
@@ -86,6 +143,6 @@ def main():
 if __name__ == '__main__':
 	main()
 else:
-	print "This file is meant to be run as main."
+	print "Run main.py from __main__."
 
 # END OF FILE
