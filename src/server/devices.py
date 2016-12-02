@@ -7,7 +7,6 @@ import os
 import sys
 import time
 import json
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/' + '../common'))
 
 # PYTHON LIBRARIES
 from collections import deque
@@ -123,11 +122,12 @@ class Phone(Device):
 		to the laptop's queue. Otherwise, add a retakePicture item to the phone
 		queue.
 		'''
-		if p_json["error"] == "None":
+		if p_json["doneTakingPicture"] == True and \
+			p_json["error"] == "None":
 			# Push the actual picture to the laptop
 			self._state_mgr.push_to_queue(enum.Device.LAPTOP, p_json["picture"])
 			print "Successfully took a picture on the iPhone."
-		else:
+		elif p_json["error"] != "None":
 			self._state_mgr.push_to_queue(enum.Device.PHONE, "takePicture")
 			print "Received error: %s, from the iPhone. " % p_json["error"]
 			print "Retaking picture."
@@ -141,11 +141,12 @@ class Laptop(Device):
 	def _handle_post(self, p_json):
 		''' If there was no error, add a turnPage item to the Pi's queue.
 		'''
-		if p_json["error"] == "None":
+		if p_json["doneProcessing"] == True and \
+			p_json["error"] == "None":
 			# Tell the Raspberry Pi to turn the page.
 			self._state_mgr.push_to_queue(enum.Device.PI, "turnPage")
 			print "Successfully processed and spoke everything on the laptop."
-		else:
+		elif p_json["error"] != "None":
 			# Tell the laptop to retry.
 			self._state_mgr.push_to_queue(enum.Device.LAPTOP, "retry")
 			print "Received error: %s from laptop." % p_json["error"]
