@@ -18,15 +18,15 @@ def enum(*sequential, **named):
 	the lookup of which returns entries from the enums dictionary. Reverse 
 	mapping available as MyEnum.get_name(my_enum_value).
 	'''
-    enums = dict(zip(sequential, range(len(sequential))), **named)
-    reverse = dict((value, key) for key, value in enums.iteritems())
-    enums['get_name'] = reverse
-    return type('Enum', (), enums)
+	enums = dict(zip(sequential, range(len(sequential))), **named)
+	reverse = dict((value, key) for key, value in enums.iteritems())
+	enums['get_name'] = reverse
+	return type('Enum', (), enums)
 
 # CODE
 if __name__ == '__main__':
 	print "Do not run enums.py from __main__."
 else:
-	EnumDevice = enum('INVALID', 'PI', 'PHONE', 'LAPTOP')
+	Device = enum('INVALID', 'PI', 'PHONE', 'LAPTOP')
 
 # END OF FILE

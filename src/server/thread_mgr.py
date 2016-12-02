@@ -8,7 +8,7 @@ import threading
 # PYTHON LIBRARIES
 
 # USER LIBRARIES
-import enums
+import enum
 
 # GLOBAL VARIABLES
 
@@ -20,15 +20,15 @@ class ThreadManager:
 	def __init__(self):
 		''' Initialises thread locks for the devices
 		'''
-		self.dev_lock = {EnumDevice.PI : threading.Lock(), \
-						 EnumDevice.PHONE : threading.Lock(), \
-						 EnumDevice.LAPTOP : threading.Lock()}
+		self.dev_lock = {enum.Device.PI : threading.Lock(), \
+						 enum.Device.PHONE : threading.Lock(), \
+						 enum.Device.LAPTOP : threading.Lock()}
 
 	def acquire_dev_lock(self, dev):
 		''' Attempts to acquire the lock for a device. Returns false if already
 		locked. Call from the thread you want to acquire the lock.
 		'''
-		if dev != EnumDevice.INVALID:
+		if dev != enum.Device.INVALID:
 			return self.dev_lock[dev].acquire(False)
 		else:
 			print "Invalid device to lock from ThreadManager."
@@ -38,12 +38,12 @@ class ThreadManager:
 		''' Attempts to release the lock for a device. An error message will be
 		printed if the lock is unlocked. Does not return any value.
 		'''
-		if dev != EnumDevice.INVALID:
+		if dev != enum.Device.INVALID:
 			try:
 				self.dev_lock[dev].release()
 			except threading.ThreadError:
 				print "Lock for device %s already unlocked" % \
-					EnumDevice.get_name(dev)
+					enum.Device.get_name(dev)
 		else:
 			print "Invalid device to release lock from ThreadManager."
 

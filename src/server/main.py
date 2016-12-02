@@ -11,13 +11,13 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 
 # USER LIBRARIES
-import enums
+import enum
 from thread_mgr import ThreadManager
 from state_mgr import StateManager
 from devices import DeviceManager
 
 # GLOBAL VARIABLES
-PORT_NUMBER = 80
+PORT_NUMBER = 8080
 SERVER_DIR = os.path.dirname(os.path.realpath(__file__)) + sep + 'www'
 
 # CLASSES
@@ -42,36 +42,33 @@ class RequestHandler(BaseHTTPRequestHandler):
 			self.wfile.write(f.read())
 			f.close()
 
-		else if self.path == '/pi':
-			content = self._dev_mgr.long_poll(EnumDevice.PI)
+		elif self.path == '/pi':
+			content = self._dev_mgr.long_poll(enum.Device.PI)
 			if content == False:
 				# Send 204 No Content
-				self.send_response(204)
-				self.end_headers()
+				self.send_error(204, "Long poll timed out.")
 			else:
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
 				self.wfile.write(content)
 
-		else if self.path == '/phone':
-			content = self._dev_mgr.long_poll(EnumDevice.PHONE)
+		elif self.path == '/phone':
+			content = self._dev_mgr.long_poll(enum.Device.PHONE)
 			if content == False:
 				# Send 204 No Content
-				self.send_response(204)
-				self.end_headers()
+				self.send_error(204, "Long poll timed out.")
 			else:
 				self.send_response(200)
 				self.send_header('Content-type', 'text/html')
 				self.end_headers()
 				self.wfile.write(content)
 
-		else if self.path == '/laptop':
-			content = self._dev_mgr.long_poll(EnumDevice.LAPTOP)
+		elif self.path == '/laptop':
+			content = self._dev_mgr.long_poll(enum.Device.LAPTOP)
 			if content == False:
 				# Send 204 No Content
-				self.send_response(204)
-				self.end_headers()
+				self.send_error(204, "Long poll timed out.")
 			else:
 				self.send_response(200)
 				self.send_header('Content-type', 'image/jpeg')
@@ -91,17 +88,16 @@ class RequestHandler(BaseHTTPRequestHandler):
 		bad_path = False
 
 		if self.path == '/pi':
-			self._dev_mgr.handle_post(EnumDevice.PI, body)
-		else if self.path == '/phone':
-			self._dev_mgr.handle_post(EnumDevice.PHONE, body)
-		else if self.path == '/laptop':
-			self._dev_mgr.handle_post(EnumDevice.LAPTOP, body)
+			self._dev_mgr.handle_post(enum.Device.PI, body)
+		elif self.path == '/phone':
+			self._dev_mgr.handle_post(enum.Device.PHONE, body)
+		elif self.path == '/laptop':
+			self._dev_mgr.handle_post(enum.Device.LAPTOP, body)
 		else:
 			bad_path = True
 
 		if bad_path:
 			self.send_error(404, "Path %s does not exist." % self.path)
-			self.end_headers()
 		else:
 			self.send_response(200)
 			self.end_headers()
@@ -125,7 +121,7 @@ def main():
 		def handler(*args):
 			''' Initialise our custom handler with the device manager.
 			'''
-			RequestHandler(dev_mgr *args)
+			RequestHandler(dev_mgr, *args)
 
 		# Create a web server and define the handler to manage the incoming 
 		# requests on separate threads.
