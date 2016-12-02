@@ -6,6 +6,7 @@ functions of the Raspberry Pi.
 # STANDARD PYTHON IMPORTS
 import argparse
 import sys
+import time
 
 # PYTHON LIBRARIES
 
@@ -24,6 +25,16 @@ def main(host, port=80):
 	client = RaspberryPiClient(host, port)
 	action = client.long_poll()
 	print "Action: %s received from the server." % action
+
+	if action == "turnPage":
+		### Turn page ###
+
+		# Simulate page turn with a delay
+		start_time = time.time()
+		while (time.time() - start_time < 5.0):
+			pass
+
+		client.post_success()
 
 def parse_host_and_port(args=None):
 	''' Returns a tuple of the parsed address and port arguments from the 
