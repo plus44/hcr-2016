@@ -34,7 +34,7 @@ def main(host, port=80):
 		while (time.time() - start_time < 5.0):
 			pass
 
-		client.post_success()
+		print "Page turned: %s" % client.post_success()
 
 def parse_host_and_port(args=None):
 	''' Returns a tuple of the parsed address and port arguments from the 

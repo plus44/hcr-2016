@@ -39,7 +39,7 @@ class RaspberryPiClient():
 			if response.status == 200:
 				return response.read()
 		except:
-			print "Returning from long-polling."
+			print "Returning from Raspberry Pi long-polling."
 			return ""
 
 	def post_success(self):
@@ -75,7 +75,7 @@ class RaspberryPiClient():
 			if response.status == 200:
 				return True
 		except:
-			print "Failed sending POST request to server."
+			print "Raspberry Pi failed sending POST request to server."
 
 		return False
 
