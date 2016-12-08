@@ -13,7 +13,7 @@ import RPi.GPIO as GPIO
 # USER LIBRARIES
 
 # GLOBAL VARIABLES
-MIN_DUTY_CYCLE_100 = 360
+MIN_DUTY_CYCLE_100 = 380
 MAX_DUTY_CYCLE_100 = 1050
 
 # CLASSES
@@ -46,8 +46,11 @@ def step_servo(servo_pin, degrees):
                 (MAX_DUTY_CYCLE_100 - MIN_DUTY_CYCLE_100)
     mapped_dc = mapped_dc / 100
 
+    print "Stepping servo pin %d by %f duty cycle" % (servo_pin, mapped_dc)
+
     pwm.start(0)
     pwm.ChangeDutyCycle(mapped_dc)
+    time.sleep(1)
     pwm.stop()
 
 def parse_pins_and_degrees(args=None):
