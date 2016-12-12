@@ -1,4 +1,5 @@
 import speech_recognition as sr
+#import gestureController as 
 import argparse
 import sys
 import time
@@ -20,14 +21,15 @@ class SpeechController():
 	def start_init_seq(self):
 		while not self.done_init_seq:
 			self._start_init_seq()
-		if self._state_machine != None:     
+		if self._state_machine != None:
 			self._state_machine.handler_speech_done_init_seq()
 		else:
 			print "Done init seq"
 
 	def _start_init_seq(self):
 		if self.init_state == enum.SpeechState.INIT:
-			#self.ask_user()
+			test_initial = self.ask_user()
+			print test_initial
 			self.n = 0
 			#resp = self.wait_for_response_or_until_timeout()
 			resp = True
@@ -54,6 +56,7 @@ class SpeechController():
 		if self.init_state == enum.SpeechState.RESPONSE_RECEIVED:
 			response =  self.process_response(self.listen_string, self.n)
 			print response
+			#gestureController.animatedSpeechProxy.say(response)
 			if response == None:
 				self.n = self.n - 1
 			self.init_state = enum.SpeechState.WAIT_FOR_RESPONSE
@@ -118,20 +121,35 @@ class SpeechController():
 				# 	return (self.ok_vol())
 		return ret
 
+	def ask_user(self):
+		return("Hey! My name is NAO, how are you?")
+
 	def get_dictionary(self, n):
 		if n == 1:
-			return {"you" : self.how_are_you()}
+			return {"you" : self.how_are_you(),\
+					"fine" : self.describe_exp(),\
+					"good" : self.describe_exp(),\
+					"thanks" : self.describe_exp(),\
+					"hi" : self.describe_exp(),\
+					"hello" : self.describe_exp(),\
+					"well" : self.describe_exp(),\
+					}
 		if n == 2:
 			return {"high" : self.increase_vol(),\
 					"higher" : self.increase_vol(),\
+					"hi" : self.increase_vol(),\
+					"hiya" : self.increase_vol(),\
+					"more" : self.increase_vol(),\
 					"low" : self.decrease_vol(),\
 					"lower" : self.decrease_vol(),\
+					"less" : self.decrease_vol(),\
 					"ok" : self.ok_vol(),\
 					"fine" : self.ok_vol(),\
 					}
 		if n == 3: 
 			return {"high" : self.increase_speed(),\
 					"higher" : self.increase_speed(),\
+					"hi" : self.increase_speed(),\
 					"low" : self.decrease_speed(),\
 					"lower" : self.decrease_speed(),\
 					"ok" : self.ok_speed(),\
@@ -143,29 +161,30 @@ class SpeechController():
 					"fine" : self.start_read(),\
 					"sure" : self.start_read(),\
 					}
-		
+	def ask_user(self):
+		return("Hey! My name is NAO, how are you?") 	
 	
 	def how_are_you(self):
 		return("I'm fine thanks" + self.describe_exp())
 
 
 	def describe_exp(self):
-		return ("we will read to you. Could you please say high or low if you'd like higher or lower volume, or OK if volume is fine")
+		return ("I am going to be reading a passage from an eagle in the snow, by Michael Morpurgo. Could you please say more or less if you wpuld like higher or lower volume, or OK if volume is fine")
 
 	def increase_vol(self):
 		# get volume
 		# increment volume
 		# upadte volume
-		return("I have increased the volume. WHat do you think about the speed? Could say higher, lower, or okay?")
+		return("I have increased the volume. What do you think about the speed? Could say more, less, or okay?")
 
 	def decrease_vol(self):
 		# get volume
 		# decrement volume
 		# upadte volume
-		return("I have decreased the volume. WHat do you think about the speed? Could say higher, lower, or okay?")
+		return("I have decreased the volume. What do you think about the speed? Could say more, less, or okay?")
 
 	def ok_vol(self):
-		return("I am glad you like the volume. WHat do you think about the speed? Could say higher, lower, or okay?")
+		return("I am glad you like the volume. What do you think about the speed? Could say more, less, or okay?")
 
 	def increase_speed(self):
 		# get speed
