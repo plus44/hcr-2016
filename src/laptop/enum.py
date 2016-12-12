@@ -29,5 +29,5 @@ if __name__ == '__main__':
 else:
 	State = enum('INIT', 'REQUEST_IMAGE', 'INITIATE_LONG_POLL', \
 		'WAIT_FOR_IMAGE', 'INITIATE_OCR', 'WAIT_FOR_OCR', 'PARSE_GESTURES')
-
+	SpeechState = enum('INIT', 'WAIT_FOR_RESPONSE', 'RESPONSE_RECEIVED', 'TIMEOUT', 'DONE')
 # END OF FILE
