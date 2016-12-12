@@ -96,7 +96,7 @@ def parse_pins_and_degrees(args=None):
         return None
     
     if results.timedelay != None:
-        times = [int(tim) for tim in results.timedelay.split(',')]
+        times = [float(tim) for tim in results.timedelay.split(',')]
     else:
         times = [DEFAULT_TIMEDELAY]*len(pins)
         
@@ -126,7 +126,10 @@ if __name__ == '__main__':
     if pin_lookup == None:
         print "Invalid argument lengths passed."
     else:
-        main(pin_lookup)
+        try:
+            main(pin_lookup)
+        except KeyboardInterrupt:
+            print "Exiting."
 else:
     print "Run step_servo.py from __main__."
 # END OF FILE

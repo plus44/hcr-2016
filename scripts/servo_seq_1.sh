@@ -1,9 +1,19 @@
 #! /bin/bash
 
-python src/pi/step_servo.py -p "9,11,10,8" -d "90,90,0,0"
-sleep 3
-python src/pi/step_servo.py -p "11" -d "0"
-sleep 1
-python src/pi/step_servo.py -p "9" -d "0"
-sleep 1
-python src/pi/step_servo.py -p "11,10" -d "90,130"
+python src/pi/step_servo.py -p "9,11,10,14,7,8,15" -d "90,120,0,180,100,75,90"
+python src/pi/step_servo.py -p "11" -d "45"
+python src/pi/step_servo.py -p "9,15" -d "0,60"
+python src/pi/step_servo.py -p "15" -d "100"
+python src/pi/step_servo.py -p "11,10,14,7,8" -d "120,130,0,0,160"
+python src/pi/step_servo.py -p "7,8,15" -d "100,75,90"
+python src/pi/step_servo.py -p "14,10" -d "180,0"
+
+
+python src/pi/step_servo.py -p "9,11,10,14,7,8,15" -d "90,120,0,180,100,75,90"
+python src/pi/step_servo.py -p "11" -d "45"
+python src/pi/step_servo.py -p "9,15" -d "0,60"
+python src/pi/step_servo.py -p "15" -d "100"
+python src/pi/step_servo.py -p "11,10,14,7,8" -d "120,130,0,0,160"
+python src/pi/step_servo.py -p "7,8,15" -d "100,75,90"
+python src/pi/step_servo.py -p "14,10" -d "180,0"
+
