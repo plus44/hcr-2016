@@ -16,13 +16,29 @@ import httplib
 class RaspberryPiClient():
 	""" Exposes a simple interface to the main program for accessing the server.
 	"""
-	def __init__(self, host, port=80):
-		''' Initialises the client on default port 80, on a provided host.
+	def __init__(self, host, port=80, state_machine=None):
+		''' Initialises the client on default port 80, on a provided host, with 
+		a reference to a PiStateMachine() object.
 		'''
 		self._host = host
 		self._port = port
+		self._state_machine = state_machine
+		self.action = "doNothing"
 		self.post_req = {"doneTurning" : False, "error" : "NotInitialized"}
 		self.conn = httplib.HTTPConnection(self._host, self._port)
+
+	def queue_long_poll(self):
+		''' Queues a long-poll to the server on a background thread. When the 
+		long-polling is complete,the result of the request will be in 
+		self.action.
+
+		Additionally, the state_machine's handler_done_long_polling() method 
+		will be called with the action as the single parameter.
+
+		TODO: BACKGROUND THREAD
+		'''
+		self.action = self.long_poll()
+		self._state_machine.handler_done_long_polling(self.action)
 
 	def long_poll(self):
 		''' Long polls the server. If code 204 is returned, the server has timed
