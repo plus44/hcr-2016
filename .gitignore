@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Ignore server PEM key
+hcr-2016.pem
