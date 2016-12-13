@@ -41,7 +41,7 @@ class GlobalStateMachine():
 		self.is_done_long_polling = False
 		self.extracted_string = ""
 		self.done_extracting_text = False
-		self.done_speaking_text = False
+		self.done_telling_story = False
 		self.done_init_speech = False
 		self.error = 'None'
 		self.first_start = True
@@ -70,6 +70,7 @@ class GlobalStateMachine():
 		''' Handler that gets called by the gesture controller whenever it has
 		finished telling the story it was queued to say.
 		'''
+		self.done_telling_story = True
 		print "Finished telling story."	
 
 	def handler_speech_done_init_seq(self):
@@ -132,7 +133,7 @@ class GlobalStateMachine():
 		elif self.state == enum.State.REQUEST_IMAGE:
 			self._client.set_first_start(self.first_start)
 
-			print "Successfully set first start."
+			print "Successfully set first start to: %s" self.first_start
 			if self.error == 'None':
 				self._client.post_success()
 			else:
@@ -170,7 +171,7 @@ class GlobalStateMachine():
 			# OCR has finished
 			if self.done_extracting_text:
 				self.done_extracting_text = False
-				self.state = enum.State.SPEAK_TEXT
+				self.state = enum.State.QUEUE_TELL_STORY
 			return
 
 		elif self.state == enum.State.QUEUE_TELL_STORY:
@@ -180,8 +181,8 @@ class GlobalStateMachine():
 			return
 
 		elif self.state == enum.State.WAIT_FOR_STORY:
-			if self.done_speaking_text:
-				self.done_speaking_text = False
+			if self.done_telling_story:
+				self.done_telling_story = False
 				# Go back to requesting an image
 				self.state = enum.State.REQUEST_IMAGE
 			return

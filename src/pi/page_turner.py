@@ -5,6 +5,7 @@
 # STANDARD PYTHON IMPORTS
 
 # PYTHON LIBRARIES
+import RPi.GPIO as GPIO
 
 # USER LIBRARIES
 from step_servo import ServoStepThread
@@ -46,7 +47,12 @@ class PageTurner():
 		for t in threads:
 			t.join()
 
-		t[0].deinit_all_gpio()
+		self._deinit_all_gpio()
+
+	def _deinit_all_gpio(self):
+		''' Deinitialises all GPIOs
+		'''
+		GPIO.cleanup()
 
 	def set_wheel_degrees(self, wheel_degrees):
 		''' Sets the wheel degrees value, usually passed from the server through

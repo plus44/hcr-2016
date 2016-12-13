@@ -64,11 +64,6 @@ class ServoStepThread(threading.Thread):
         '''
         self.step_servo(self.pin, self.deg)
 
-    def deinit_all_gpio(self):
-        ''' Deinitialises ALL GPIOs. Call ONLY after all threads are finished.
-        '''
-        GPIO.cleanup()
-
 
 # FUNCTIONS
 def deinit_all_gpio():

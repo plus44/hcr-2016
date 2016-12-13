@@ -50,6 +50,7 @@ class OCRController():
 		'''
 		self.is_extracting = True
 		image = Image.open(image_path)
+		text = ""
 		try:
 			text = tesserocr.image_to_text(image, lang=self._lang, psm=self._psm)
 		except RuntimeError:
