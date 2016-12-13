@@ -42,7 +42,9 @@ class GlobalStateMachine():
 		self.extracted_string = ""
 		self.done_extracting_text = False
 		self.done_speaking_text = False
+		self.done_init_speech = False
 		self.error = 'None'
+		self.first_start = True
 
 	def handler_done_long_polling(self, image):
 		''' Handler that gets called by the client whenever long-polling has a
@@ -74,6 +76,7 @@ class GlobalStateMachine():
 		''' Handler that gets called by the speech controller whenever it has 
 		finished doing the initial interaction.
 		'''
+		self.done_init_speech = True
 		print "Finished speech interaction initialisation sequence."
 
 	def set_client(self, client):
@@ -115,12 +118,30 @@ class GlobalStateMachine():
 			self.state = enum.State.REQUEST_IMAGE
 			return
 
+		elif self.state == enum.State.QUEUE_INIT_SPEECH:
+			self._speech_controller.start_init_seq()
+			self.state = enum.State.WAIT_FOR_INIT_SPEECH
+			return
+
+		elif self.state == enum.State.WAIT_FOR_INIT_SPEECH:
+			if self.done_init_speech:
+				self.done_init_speech = False
+				self.state = enum.State.REQUEST_IMAGE
+			return
+
 		elif self.state == enum.State.REQUEST_IMAGE:
+			self._client.set_first_start(self.first_start)
+
 			if self.error == 'None':
 				self._client.post_success()
 			else:
 				self._client.post_failure(self, self.error)
 			self.state = enum.State.QUEUE_LONG_POLL
+
+			# First start should only be true the first time we post to server
+			if self.first_start:
+				self.first_start = False
+
 			return
 
 		elif self.state == enum.State.QUEUE_LONG_POLL:
@@ -177,7 +198,8 @@ def main(host, port, robot_ip, robot_port):
 	state_machine = GlobalStateMachine()
 	client = LaptopClient(host, port=port, state_machine=state_machine)
 	ocr = OCRController(state_machine=state_machine)
-	gesture_controller = GestureController(state_machine=state_machine)
+	gesture_controller = GestureController(robot_ip, robot_port, \
+		state_machine=state_machine)
 	speech_controller = SpeechController(gesture_controller, \
 		state_machine=state_machine)
 
@@ -198,7 +220,7 @@ def main(host, port, robot_ip, robot_port):
 	# with open('photo/latest.jpeg', 'wb') as fh:
 	# 	fh.write(picture.decode('base64'))
 
-def parse_host_and_port(args=None):
+def parse_hosts_and_ports(args=None):
 	''' Returns a tuple of the parsed address and port arguments from the 
 	command line
 	'''
@@ -233,8 +255,8 @@ def parse_host_and_port(args=None):
 
 # CODE
 if __name__ == '__main__':
-	host, port = parse_host_and_port(sys.argv[1:])
-	main(host, port)
+	host, port, robot_ip, robot_port = parse_hosts_and_ports(sys.argv[1:])
+	main(host, port, robot_ip, robot_port)
 else:
 	print "Run main.py from __main__."
 
