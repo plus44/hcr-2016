@@ -90,3 +90,6 @@ ENV/
 
 # Ignore the SSH key
 hcr-2016.pem
+
+# Do not .gitignore anything in the sdk
+!sdk/
