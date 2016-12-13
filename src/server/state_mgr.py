@@ -27,6 +27,14 @@ class StateManager():
 						 enum.Device.PHONE : threading.Lock(), \
 						 enum.Device.LAPTOP : threading.Lock()}
 
+	def clear_queue(self, dev):
+		''' Clear the queue of the passed dev
+		'''
+		if dev != enum.Device.INVALID:
+			self.dev_lock[dev].acquire(True)
+			self.dev_que[dev].clear()
+			print "Cleared queue for device %s" % enum.Device.get_name(dev)
+
 	def push_to_queue(self, dev, item):
 		''' Push an item to the end of the queue of a device.
 		'''

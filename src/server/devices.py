@@ -160,7 +160,14 @@ class Laptop(Device):
 			print "Successfully processed and spoke everything on the laptop."
 		
 		elif p_json["doneProcessing"] == True and \
-			p_json["error"] == "None":
+			p_json["error"] == "None" and \
+			p_json["isFirstStart"]:
+
+			# Clear all device queues:
+			self._state_mgr.clear_queue(enum.Device.PHONE)
+			self._state_mgr.clear_queue(enum.Device.LAPTOP)
+			self._state_mgr.clear_queue(enum.Device.PI)
+
 			# Tell the phone to take an image.
 			self._state_mgr.push_to_queue(enum.Device.PHONE, "takePicture")
 		
