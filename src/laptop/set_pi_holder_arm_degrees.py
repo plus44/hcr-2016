@@ -27,7 +27,7 @@ def main(host, port, degrees):
 			"%d" % degrees
 	
 
-def parse_host_and_port(args=None):
+def parse_host_port_and_degrees(args=None):
 	''' Returns a tuple of the parsed address and port arguments from the 
 	command line
 	'''
@@ -46,7 +46,7 @@ def parse_host_and_port(args=None):
 						default=80)
 	parser.add_argument('-d', '--degrees',
 						type=int,
-						help="Degrees to set the pi wheel to",
+						help="Degrees to set the Pi wheel to",
 						required=True,
 						default=DEFAULT_WHEEL_DEGREES)
 
@@ -55,7 +55,7 @@ def parse_host_and_port(args=None):
 
 # CODE
 if __name__ == '__main__':
-	host, port, degrees = parse_host_and_port(sys.argv[1:])
+	host, port, degrees = parse_host_port_and_degrees(sys.argv[1:])
 	main(host, port, degrees)
 else:
 	print "Run set_pi_holder_arm_degrees.py from __main__."
