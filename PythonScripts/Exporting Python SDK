@@ -1,0 +1,4 @@
+export PYTHONPATH=$PYTHONPATH:/home/human/hcr-2016/sdk/pynaoqi-python2.7-2.1.2.17-linux64
+
+
+https://community.ald.softbankrobotics.com/en/forum/motion-speech-python-4779

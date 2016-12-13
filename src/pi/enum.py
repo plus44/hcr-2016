@@ -1,5 +1,5 @@
 #! /usr/bin/python
-''' Provides enumerated variable types to the laptop
+''' Provides enumerated variable types to the Pi
 '''
 
 # STANDARD PYTHON IMPORTS

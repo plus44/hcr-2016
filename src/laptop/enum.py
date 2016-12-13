@@ -27,7 +27,9 @@ def enum(*sequential, **named):
 if __name__ == '__main__':
 	print "Do not run enum.py from __main__."
 else:
-	State = enum('INIT', 'REQUEST_IMAGE', 'INITIATE_LONG_POLL', \
-		'WAIT_FOR_IMAGE', 'INITIATE_OCR', 'WAIT_FOR_OCR', 'PARSE_GESTURES')
-	SpeechState = enum('INIT', 'WAIT_FOR_RESPONSE', 'RESPONSE_RECEIVED', 'TIMEOUT', 'DONE')
+	State = enum('INIT', 'REQUEST_IMAGE', 'QUEUE_LONG_POLL', \
+		'WAIT_FOR_IMAGE', 'QUEUE_OCR', 'WAIT_FOR_OCR', 'QUEUE_TELL_STORY', \
+		'WAIT_FOR_STORY')
+	SpeechState = enum('INIT', 'WAIT_FOR_RESPONSE', 'RESPONSE_RECEIVED', \
+		'TIMEOUT', 'DONE')
 # END OF FILE
