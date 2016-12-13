@@ -1,5 +1,4 @@
 import speech_recognition as sr
-#import gestureController as 
 import argparse
 import sys
 import time
@@ -7,9 +6,10 @@ import base64
 import enum
 
 class SpeechController():
-	
-	def __init__(self, state_machine=None):
+
+	def __init__(self, gestureController, state_machine=None):
 		self._state_machine = state_machine
+		self._gesture_controller = gestureController
 		self.init_state = enum.SpeechState.INIT
 		self.done_init_seq = False
 		self.processed_speech = ""
@@ -29,6 +29,7 @@ class SpeechController():
 	def _start_init_seq(self):
 		if self.init_state == enum.SpeechState.INIT:
 			test_initial = self.ask_user()
+			self._gesture_controller.animatedSay(test_initial)
 			print test_initial
 			self.n = 0
 			#resp = self.wait_for_response_or_until_timeout()
@@ -56,6 +57,9 @@ class SpeechController():
 		if self.init_state == enum.SpeechState.RESPONSE_RECEIVED:
 			response =  self.process_response(self.listen_string, self.n)
 			print response
+			self._gesture_controller.animatedSay(response)
+			#call function that says response
+
 			#gestureController.animatedSpeechProxy.say(response)
 			if response == None:
 				self.n = self.n - 1
@@ -75,6 +79,7 @@ class SpeechController():
 		# if self.init_state == enum.SpeechState.DONE:
 		# 	call gesture controller and say text
 		# 	self.done_init_seq = True
+
 
 
 	def listen(self):
@@ -147,11 +152,11 @@ class SpeechController():
 					"fine" : self.ok_vol(),\
 					}
 		if n == 3: 
-			return {"high" : self.increase_speed(),\
-					"higher" : self.increase_speed(),\
+			return {"fast" : self.increase_speed(),\
+					"faster" : self.increase_speed(),\
 					"hi" : self.increase_speed(),\
-					"low" : self.decrease_speed(),\
-					"lower" : self.decrease_speed(),\
+					"slow" : self.decrease_speed(),\
+					"slower" : self.decrease_speed(),\
 					"ok" : self.ok_speed(),\
 					"fine" : self.ok_speed(),\
 					}
@@ -162,44 +167,36 @@ class SpeechController():
 					"sure" : self.start_read(),\
 					}
 	def ask_user(self):
-		return("Hey! My name is NAO, how are you?") 	
+		return("Hey! My name is Pinaoqio, how are you?") 	
 	
 	def how_are_you(self):
-		return("I'm fine thanks" + self.describe_exp())
+		return("I'm fine, thanks." + self.describe_exp())
 
 
 	def describe_exp(self):
-		return ("I am going to be reading a passage from an eagle in the snow, by Michael Morpurgo. Could you please say more or less if you wpuld like higher or lower volume, or OK if volume is fine")
+		return ("Today, I am going to be reading a passage from an eagle in the snow, by Michael Morpurgo. Let's check the volume. Could you please say more or less if you would like higher or lower volume, or OK if the volume is fine.")
 
 	def increase_vol(self):
-		# get volume
-		# increment volume
-		# upadte volume
-		return("I have increased the volume. What do you think about the speed? Could say more, less, or okay?")
+		self._gesture_controller.incementVol()
+		return("Great, I have increased the volume. What do you think about the speed? Please say faster, slower, or ok.")
 
 	def decrease_vol(self):
-		# get volume
-		# decrement volume
-		# upadte volume
-		return("I have decreased the volume. What do you think about the speed? Could say more, less, or okay?")
+		self._gesture_controller.decrementVol()
+		return("Great, I have decreased the volume. What do you think about the speed? Please say faster, slower, or ok.")
 
 	def ok_vol(self):
-		return("I am glad you like the volume. What do you think about the speed? Could say more, less, or okay?")
+		return("I am glad you like the volume. What do you think about the speed? Please say faster, slower, or ok.")
 
 	def increase_speed(self):
-		# get speed
-		# increment speed
-		# upadte speed
-		return("I have increased the speed. I am now ready to read you a story! Could you say ok when you are ready?")
+		self._gesture_controller.incrementSpeed()
+		return("Alright, I have increased the speed. I am now ready to read you a story! Please say ok when you are ready!")
 
 	def decrease_speed(self):
-		# get speed
-		# decrement speed
-		# upadte speed
-		return("I have decreased the speed. I am now ready to read you a story! Could you say ok when you are ready?")
+		self._gesture_controller.decrementSpeed()
+		return("Alright, I have decreased the speed. I am now ready to read you a story! Please say ok when you are ready!")
 
 	def ok_speed(self):
-		return("I am glad you like the speed. I am now ready to read you a story! Could you say ok when you are ready?")
+		return("Perfect. I am now ready to read you a story! Could you say ok when you are ready!")
 
 	def start_read(self):
 		#start reading
