@@ -31,8 +31,8 @@ class LaptopClient():
 		self._state_machine = state_machine
 		self.post_req = {'doneProcessing' : False, \
 						 'error' : 'NotInitialized', \
-						 'piExtraAction' : 'doNothing',
-						 'phoneExtraAction' : 'doNothing',
+						 'piExtraAction' : 'doNothing', \
+						 'phoneExtraAction' : 'doNothing', \
 						 'isFirstStart' : True}
 		self.conn = httplib.HTTPConnection(self._host, self._port)
 		self.is_long_polling = False

@@ -132,6 +132,7 @@ class GlobalStateMachine():
 		elif self.state == enum.State.REQUEST_IMAGE:
 			self._client.set_first_start(self.first_start)
 
+			print "Successfully set first start."
 			if self.error == 'None':
 				self._client.post_success()
 			else:

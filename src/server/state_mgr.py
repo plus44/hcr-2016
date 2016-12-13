@@ -34,6 +34,11 @@ class StateManager():
 			self.dev_lock[dev].acquire(True)
 			self.dev_que[dev].clear()
 			print "Cleared queue for device %s" % enum.Device.get_name(dev)
+			try:	
+				self.dev_lock[dev].release()
+			except threading.ThreadError:
+				print "Lock for device queue: %s already unlocked." % \
+					enum.Device.get_name(dev)
 
 	def push_to_queue(self, dev, item):
 		''' Push an item to the end of the queue of a device.
