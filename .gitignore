@@ -92,4 +92,4 @@ ENV/
 hcr-2016.pem
 
 # Do not .gitignore anything in the sdk
-!sdk/
+!sdk/pynaoqi-python2.7-2.1.2.17-linux64/*
