@@ -31,9 +31,14 @@ class StateManager():
 		''' Clear the queue of the passed dev
 		'''
 		if dev != enum.Device.INVALID:
-			print "Clearing queue for device %s" % enum.Device.get_name(dev)
+			self.dev_lock[dev].acquire(True)
 			self.dev_que[dev].clear()
-			print "Cleared queue for device %s" % enum.Device.get_name(dev)
+			try:
+				self.dev_lock[dev].release()
+			except threading.ThreadError:
+				print "Lock for device queue: %s already unlocked." % \
+					enum.Device.get_name[dev]
+			print "Cleared queue for device %s" % enum.Device.get_name[dev]
 
 	def push_to_queue(self, dev, item):
 		''' Push an item to the end of the queue of a device.
@@ -45,7 +50,7 @@ class StateManager():
 				self.dev_lock[dev].release()
 			except threading.ThreadError:
 				print "Lock for device queue: %s already unlocked." % \
-					enum.Device.get_name(dev)
+					enum.Device.get_name[dev]
 
 	def pop_from_queue(self, dev):
 		''' Pop an item from the top of a device's queue. FIFO ordering is 
@@ -61,7 +66,7 @@ class StateManager():
 				self.dev_lock[dev].release()
 			except threading.ThreadError:
 				print "Lock for device queue: %s already unlocked." % \
-					enum.Device.get_name(dev)
+					enum.Device.get_name[dev]
 			finally:
 				return item
 		else:

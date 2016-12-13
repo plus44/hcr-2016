@@ -163,6 +163,7 @@ class Laptop(Device):
 			p_json["error"] == "None" and \
 			p_json["isFirstStart"]:
 
+			print "Clearing queues."
 			# Clear all device queues:
 			self._state_mgr.clear_queue(enum.Device.PHONE)
 			self._state_mgr.clear_queue(enum.Device.LAPTOP)
