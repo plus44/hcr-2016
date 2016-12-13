@@ -31,6 +31,7 @@ class StateManager():
 		''' Clear the queue of the passed dev
 		'''
 		if dev != enum.Device.INVALID:
+			print "Clearing queue for device %s" % enum.Device.get_name(dev)
 			self.dev_que[dev].clear()
 			print "Cleared queue for device %s" % enum.Device.get_name(dev)
 
