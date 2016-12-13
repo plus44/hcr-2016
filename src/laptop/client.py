@@ -29,7 +29,10 @@ class LaptopClient():
 		self._host = host
 		self._port = port
 		self._state_machine = state_machine
-		self.post_req = {"doneProcessing" : False, "error" : "NotInitialized"}
+		self.post_req = {'doneProcessing' : False, \
+						 'error' : 'NotInitialized', \
+						 'piExtraAction' : 'doNothing',
+						 'phoneExtraAction' : 'doNothing'}
 		self.conn = httplib.HTTPConnection(self._host, self._port)
 		self.is_long_polling = False
 		self.decoded_image = ""
@@ -71,6 +74,30 @@ class LaptopClient():
 			print "Returning from laptop long-polling."
 			return ""
 
+	def post_pi_set_wheel_degrees(self, degrees):
+		''' Adjust the wheel degrees of the Raspberry Pi
+
+		Returns True if successfully sent the request.
+		Returns False if request failed sending.
+		'''
+		self.post_req['doneProcessing'] = False
+		self.post_req['error'] = 'None'
+		self.post_req['piExtraAction'] = 'setWheelDegrees:%s' % degrees
+		self.post_req['phoneExtraAction'] = 'doNothing'
+		return self._do_post_request()
+
+	def post_pi_set_holder_arm_degrees(self, degrees):
+		''' Adjust the holder arm degrees of the Raspberry Pi
+
+		Returns True if successfully sent the request.
+		Returns False if request failed sending.
+		'''
+		self.post_req['doneProcessing'] = False
+		self.post_req['error'] = 'None'
+		self.post_req['piExtraAction'] = 'setHolderArmDegrees:%s' % degrees
+		self.post_req['phoneExtraAction'] = 'doNothing'
+		return self._do_post_request()
+
 	def post_success(self):
 		''' POST request to the server that tells it we're done processing stuff
 		without any errors.
@@ -78,8 +105,10 @@ class LaptopClient():
 		Returns True if successfully sent the request.
 		Returns False if request failed sending.
 		'''
-		self.post_req["doneProcessing"] = True
-		self.post_req["error"] = "None"
+		self.post_req['doneProcessing'] = True
+		self.post_req['error'] = 'None'
+		self.post_req['piExtraAction'] = 'doNothing'
+		self.post_req['phoneExtraAction'] = 'doNothing'
 		return self._do_post_request()
 
 	def post_failure(self, error):
@@ -88,8 +117,10 @@ class LaptopClient():
 		Returns True if successfully sent the request.
 		Returns False if request failed sending.
 		'''
-		self.post_req["doneProcessing"] = True
-		self.post_req["error"] = error
+		self.post_req['doneProcessing'] = True
+		self.post_req['error'] = error
+		self.post_req['piExtraAction'] = 'doNothing'
+		self.post_req['phoneExtraAction'] = 'doNothing'
 		return self._do_post_request()
 
 	def _do_post_request(self):
@@ -97,8 +128,8 @@ class LaptopClient():
 		contents given by self.post_req.
 		'''
 		try:
-			self.conn.request("POST", "/laptop", json.dumps(self.post_req), \
-				{"Content-type" : "application/json"})
+			self.conn.request('POST', '/laptop', json.dumps(self.post_req), \
+				{'Content-type' : 'application/json'})
 			response = self.conn.getresponse()
 
 			if response.status == 200:
