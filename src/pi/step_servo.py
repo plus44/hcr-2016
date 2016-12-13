@@ -19,7 +19,7 @@ MAX_DUTY_CYCLE_100 = 1050
 DEFAULT_TIMEDELAY = 1 # second
 
 # CLASSES
-class ServoThread(threading.Thread):
+class ServoStepThread(threading.Thread):
     ''' Runs a single servo thread on a given pin/deg combo
     '''
     def __init__(self, pin, deg, tim):
@@ -63,6 +63,11 @@ class ServoThread(threading.Thread):
         ''' Runs the thread
         '''
         self.step_servo(self.pin, self.deg)
+
+    def deinit_all_gpio(self):
+        ''' Deinitialises ALL GPIOs. Call ONLY after all threads are finished.
+        '''
+        GPIO.cleanup()
 
 
 # FUNCTIONS
@@ -109,7 +114,7 @@ def main(pin_lookup):
     threads = []
     
     for pin, tup in pin_lookup.iteritems():
-        threads.append(ServoThread(pin, tup[0], tup[1]))
+        threads.append(ServoStepThread(pin, tup[0], tup[1]))
 
     for t in threads:
         t.start()
@@ -119,6 +124,7 @@ def main(pin_lookup):
         
     deinit_all_gpio()
 
+
 # CODE
 
 if __name__ == '__main__':
@@ -126,10 +132,7 @@ if __name__ == '__main__':
     if pin_lookup == None:
         print "Invalid argument lengths passed."
     else:
-        try:
-            main(pin_lookup)
-        except KeyboardInterrupt:
-            print "Exiting."
+        main(pin_lookup)
 else:
     print "Run step_servo.py from __main__."
 # END OF FILE

@@ -141,6 +141,17 @@ class Laptop(Device):
 	def _handle_post(self, p_json):
 		''' If there was no error, add a turnPage item to the Pi's queue.
 		'''
+
+		# Passthrough modes from laptop to pi and phone.
+		if p_json["piExtraAction"] != "doNothing":
+			self._state_mgr.push_to_queue(enum.Device.PI, \
+				p_json["piExtraAction"])
+
+		if p_json["phoneExtraAction"] != "doNothing":
+			self._state_mgr.push_to_queue(enum.Device.PHONE, \
+				p_json["phoneExtraAction"])
+
+		# 'State' machine mode of laptop
 		if p_json["doneProcessing"] == True and \
 			p_json["error"] == "None":
 			# Tell the Raspberry Pi to turn the page.
