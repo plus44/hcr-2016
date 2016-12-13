@@ -83,11 +83,11 @@ class SpeechController():
 
 
 	def listen(self):
-		print("A moment of silence, please...")
+		# print("A moment of silence, please...")
 		with self.m as source: 
 			self.r.adjust_for_ambient_noise(source)
-		print("Set minimum energy threshold to {}".format(self.r.energy_threshold))
-		print("test1")
+		# print("Set minimum energy threshold to {}".format(self.r.energy_threshold))
+		# print("test1")
 		print("Say something!")
 		with self.m as source: 
 			audio = self.r.listen(source)
@@ -170,14 +170,13 @@ class SpeechController():
 		return("Hey! My name is Pinaoqio, how are you?") 	
 	
 	def how_are_you(self):
-		return("I'm fine, thanks." + self.describe_exp())
-
+		return("I'm fine, thanks. " + self.describe_exp())
 
 	def describe_exp(self):
 		return ("Today, I am going to be reading a passage from an eagle in the snow, by Michael Morpurgo. Let's check the volume. Could you please say more or less if you would like higher or lower volume, or OK if the volume is fine.")
 
 	def increase_vol(self):
-		self._gesture_controller.incementVol()
+		self._gesture_controller.incrementVol()
 		return("Great, I have increased the volume. What do you think about the speed? Please say faster, slower, or ok.")
 
 	def decrease_vol(self):
@@ -231,7 +230,6 @@ class SpeechController():
 def main ():
 	speech_controller = SpeechController()
 	speech_controller.start_init_seq()
-
 
 if __name__ == "__main__":
 	main()
