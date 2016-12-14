@@ -63,6 +63,7 @@ class PageTurner():
 		self._init_servo_gpio(7)
 		self._init_servo_gpio(8)
 		self._init_servo_gpio(15)
+		print "Successfully init all servo GPIO"
 
 	def _init_servo_gpio(self,pin):
 		''' Initialises a single servo GPIO pin.
@@ -74,6 +75,7 @@ class PageTurner():
 		''' Deinitialises all GPIOs
 		'''
 		GPIO.cleanup()
+		print "Successfully deinit all servo GPIO"
 
 	def set_wheel_degrees(self, wheel_degrees):
 		''' Sets the wheel degrees value, usually passed from the server through
