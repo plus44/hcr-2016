@@ -58,6 +58,8 @@ class Device():
 			finally:
 				self._thread_mgr.release_dev_lock(self._dev)
 
+		return False
+
 	def ready_to_return(self):
 		''' Checks the designated device's device queue inside the state 
 		manager. If it's empty, it returns false. If there's something to do, 
