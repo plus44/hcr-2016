@@ -29,7 +29,13 @@ class PageTurner():
 		self.is_init = False
 		self.wheel_degrees = DEFAULT_WHEEL_DEGREES
 		self.holder_arm_degrees = DEFAULT_HOLDER_ARM_DEGREES
+		self.init_all_servo_gpio()
 		self.init_servo_positions()
+
+	def __del__(self):
+		''' Destructor for the page turner. Deinit all servo GPIOs
+		'''
+		self.deinit_all_servo_gpio()
 
 	def _run_servos(self, pin_lookup):
 		''' Runs every servo in the pin_lookup table that looks like:
@@ -119,8 +125,6 @@ class PageTurner():
 		''' Turns a page using the experimentally adjusted degree values. Calls
 		the state_machine's handler_turned_page() function once done.
 		'''
-		self.init_all_servo_gpio()
-
 		if not self.is_init:
 			self.init_servo_positions()
 		self.is_init = False

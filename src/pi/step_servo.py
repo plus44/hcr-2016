@@ -25,7 +25,7 @@ class ServoStepThread(threading.Thread):
     def __init__(self, pin, deg, tim):
         threading.Thread.__init__(self)
         self.pin = pin
-        # Causes segfaults when called repeatedly after deinit
+        # Causes segfaults when called repeatedly
         # self.init_gpio(pin)
         self.deg = deg
         self.tim = tim
@@ -35,7 +35,6 @@ class ServoStepThread(threading.Thread):
             global MIN/MAX duty cycle values for mapping. 
         '''
         # Create a PWM object on servo_pin at 50Hz
-        GPIO.setmode(GPIO.BCM)
         pwm = GPIO.PWM(servo_pin, 50)
 
         if degrees < 0:
@@ -63,10 +62,10 @@ class ServoStepThread(threading.Thread):
 
 # FUNCTIONS
 def init_gpio(servo_pin):
-        ''' Initialises the given servo pin on the Pi.
-        '''
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(servo_pin, GPIO.OUT)
+    ''' Initialises the given servo pin on the Pi.
+    '''
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(servo_pin, GPIO.OUT)
 
 def deinit_all_gpio():
     ''' Deinitialises all GPIOs
