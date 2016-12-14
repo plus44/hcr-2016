@@ -29,6 +29,7 @@ class PageTurner():
 		self.is_init = False
 		self.wheel_degrees = DEFAULT_WHEEL_DEGREES
 		self.holder_arm_degrees = DEFAULT_HOLDER_ARM_DEGREES
+		self.pin_lookup = {}
 		self.init_all_servo_gpio()
 		self.init_servo_positions()
 
@@ -101,13 +102,13 @@ class PageTurner():
 	def init_servo_positions(self):
 		''' Takes the servos to their defined starting positions. 
 		'''
-		pin_lookup = {9  : (90,  DEFAULT_SETTLING_TIME), \
-					  11 : (120, DEFAULT_SETTLING_TIME), \
-					  10 : (0,   DEFAULT_SETTLING_TIME), \
-					  14 : (180, DEFAULT_SETTLING_TIME), \
-					  7  : (100, DEFAULT_SETTLING_TIME), \
-					  8  : (75,  DEFAULT_SETTLING_TIME), \
-					  15 : (90,  DEFAULT_SETTLING_TIME)}
+		self.pin_lookup = {9  : (90,  DEFAULT_SETTLING_TIME), \
+						   11 : (120, DEFAULT_SETTLING_TIME), \
+						   10 : (0,   DEFAULT_SETTLING_TIME), \
+						   14 : (180, DEFAULT_SETTLING_TIME), \
+						   7  : (100, DEFAULT_SETTLING_TIME), \
+						   8  : (75,  DEFAULT_SETTLING_TIME), \
+						   15 : (90,  DEFAULT_SETTLING_TIME)}
 
 		self._run_servos(pin_lookup)
 		self.is_init = True
@@ -131,39 +132,37 @@ class PageTurner():
 			self.init_servo_positions()
 		self.is_init = False
 
-		pin_lookup = {11 : (self.wheel_degrees, DEFAULT_SETTLING_TIME)}
-		self._run_servos(pin_lookup)
-		pin_lookup.clear()
 
-		pin_lookup = {9  : (0,   DEFAULT_SETTLING_TIME), \
-					  15 : (75,  DEFAULT_SETTLING_TIME)}
+		self.pin_lookup[11] = (self.wheel_degrees, DEFAULT_SETTLING_TIME)
 		self._run_servos(pin_lookup)
-		pin_lookup.clear()
 
-		pin_lookup = {15 : (100, DEFAULT_SETTLING_TIME)}
+
+		self.pin_lookup[9]  = (0,   DEFAULT_SETTLING_TIME)
+		self.pin_lookup[15] = (75,  DEFAULT_SETTLING_TIME)
 		self._run_servos(pin_lookup)
-		pin_lookup.clear()
 
-		pin_lookup = {11 : (120, DEFAULT_SETTLING_TIME), \
-					  10 : (130, DEFAULT_SETTLING_TIME), \
-					  14 : (0,   DEFAULT_SETTLING_TIME)}
-					  # 7  : (0,   DEFAULT_SETTLING_TIME)}
-					  # 8  : (160, DEFAULT_SETTLING_TIME)}
+
+		self.pin_lookup[15] = (100,  DEFAULT_SETTLING_TIME)
 		self._run_servos(pin_lookup)
-		pin_lookup.clear()
 
-		pin_lookup = {7  : (100, DEFAULT_SETTLING_TIME), \
-					  8  : (75,  DEFAULT_SETTLING_TIME), \
-					  15 : (90,  DEFAULT_SETTLING_TIME)}
+
+		self.pin_lookup[11] = (120, DEFAULT_SETTLING_TIME)
+		self.pin_lookup[10] = (130, DEFAULT_SETTLING_TIME)
+		self.pin_lookup[14] = (0,   DEFAULT_SETTLING_TIME)
+		self.pin_lookup[7]  = (0,   DEFAULT_SETTLING_TIME)
+		self.pin_lookup[8]  = (160, DEFAULT_SETTLING_TIME)
 		self._run_servos(pin_lookup)
-		pin_lookup.clear()
 
-		pin_lookup = {14 : (180, DEFAULT_SETTLING_TIME), \
-					  10 : (0,   DEFAULT_SETTLING_TIME)}
+
+		self.pin_lookup[7]  = (100, DEFAULT_SETTLING_TIME)
+		self.pin_lookup[8]  = (75,  DEFAULT_SETTLING_TIME)
+		self.pin_lookup[15] = (90,  DEFAULT_SETTLING_TIME)
 		self._run_servos(pin_lookup)
-		pin_lookup.clear()
 
-		self.deinit_all_servo_gpio()
+
+		self.pin_lookup[14] = (180, DEFAULT_SETTLING_TIME)
+		self.pin_lookup[10] = (0,   DEFAULT_SETTLING_TIME)
+		self._run_servos(pin_lookup)
 
 
 # FUNCTIONS
