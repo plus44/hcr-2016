@@ -35,6 +35,7 @@ class ServoStepThread(threading.Thread):
             global MIN/MAX duty cycle values for mapping. 
         '''
         # Create a PWM object on servo_pin at 50Hz
+        GPIO.setmode(GPIO.BCM)
         pwm = GPIO.PWM(servo_pin, 50)
 
         if degrees < 0:
