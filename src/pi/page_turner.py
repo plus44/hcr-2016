@@ -47,10 +47,10 @@ class PageTurner():
 		tim_str = ""
 
 		for pin, tup in pin_lookup.iteritems():
-			pin_str = "%s%d" % (pin_str, pin)
-			deg_str = "%s%d" % (deg_str, tup[0])
-			tim_str = "%s%d" % (tim_str, tup[1])
-			
+			pin_str = "%s,%d" % (pin_str, pin)
+			deg_str = "%s,%d" % (deg_str, tup[0])
+			tim_str = "%s,%d" % (tim_str, tup[1])
+
 		subprocess.call('src/pi/step_servo.py -p "%s" -d "%s" -t "%s"' % \
 			(pin_str, deg_str, tim_str), shell=True)
 
