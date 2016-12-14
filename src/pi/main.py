@@ -13,6 +13,7 @@ import time
 # USER LIBRARIES
 import enum
 from client import RaspberryPiClient
+from page_turner import PageTurner
 
 # GLOBAL VARIABLES
 
