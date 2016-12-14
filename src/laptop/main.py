@@ -62,9 +62,9 @@ class GlobalStateMachine():
 		''' Handler that gets called by the OCR whenever it has finished 
 		extracting text from a string.
 		'''
-		self.extracted_string = text
+		self.extracted_string = text.encode('utf-8')
 		self.done_extracting_text = True
-		print "Extracted text: %s" % self.extracted_string.encode('utf-8')
+		print "Extracted text: %s" % self.extracted_string
 
 	def handler_told_story(self):
 		''' Handler that gets called by the gesture controller whenever it has

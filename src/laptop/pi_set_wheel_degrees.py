@@ -22,6 +22,7 @@ def main(host, port, degrees):
 	server on host:port.
 	'''
 	client = LaptopClient(host, port=port)
+	client.set_first_start(False)
 	if client.post_pi_set_wheel_degrees(degrees):
 		print "Successfully set the degrees of the Raspberry Pi wheel to %d" % \
 			degrees

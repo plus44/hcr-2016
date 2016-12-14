@@ -116,7 +116,7 @@ class SpeechController():
 		#print "[n = %d] MY_DICT: %s" % (n, my_dict)
 		#print "var1 = %s" % var1
 		#print "n = %d"  % n
-		ret = None
+		ret = ""
 		funct_dict = {}
 		for keyword, funct in my_dict.iteritems():
 			print "var1: %s, keyword: %s, find: %d" % (var1, keyword, var1.find(keyword))
