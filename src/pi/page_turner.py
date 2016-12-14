@@ -3,6 +3,7 @@
 '''
 
 # STANDARD PYTHON IMPORTS
+import subprocess
 
 # PYTHON LIBRARIES
 import RPi.GPIO as GPIO
@@ -29,7 +30,6 @@ class PageTurner():
 		self.is_init = False
 		self.wheel_degrees = DEFAULT_WHEEL_DEGREES
 		self.holder_arm_degrees = DEFAULT_HOLDER_ARM_DEGREES
-		self.pin_lookup = {}
 		self.init_all_servo_gpio()
 		self.init_servo_positions()
 
@@ -39,6 +39,22 @@ class PageTurner():
 		self.deinit_all_servo_gpio()
 
 	def _run_servos(self, pin_lookup):
+		''' Runs every servo in the pin lookup table using the src/pi/step_servo.py
+		bash script.
+		'''
+		pin_str = ""
+		deg_str = ""
+		tim_str = ""
+
+		for pin, tup in pin_lookup.iteritems():
+			pin_str = "%s%d" % (pin_str, pin)
+			deg_str = "%s%d" % (deg_str, tup[0])
+			tim_str = "%s%d" % (tim_str, tup[1])
+			
+		subprocess.call('src/pi/step_servo.py -p "%s" -d "%s" -t "%s"' % \
+			(pin_str, deg_str, tim_str), shell=True)
+
+	def _run_servos_non_bash(self, pin_lookup):
 		''' Runs every servo in the pin_lookup table that looks like:
 			{ pin : (degrees, settling_time) }
 		'''
@@ -102,15 +118,15 @@ class PageTurner():
 	def init_servo_positions(self):
 		''' Takes the servos to their defined starting positions. 
 		'''
-		self.pin_lookup = {9  : (90,  DEFAULT_SETTLING_TIME), \
-						   11 : (120, DEFAULT_SETTLING_TIME), \
-						   10 : (0,   DEFAULT_SETTLING_TIME), \
-						   14 : (180, DEFAULT_SETTLING_TIME), \
-						   7  : (100, DEFAULT_SETTLING_TIME), \
-						   8  : (75,  DEFAULT_SETTLING_TIME), \
-						   15 : (90,  DEFAULT_SETTLING_TIME)}
+		pin_lookup = {9  : (90,  DEFAULT_SETTLING_TIME), \
+					  11 : (120, DEFAULT_SETTLING_TIME), \
+					  10 : (0,   DEFAULT_SETTLING_TIME), \
+					  14 : (180, DEFAULT_SETTLING_TIME), \
+					  7  : (100, DEFAULT_SETTLING_TIME), \
+					  8  : (75,  DEFAULT_SETTLING_TIME), \
+					  15 : (90,  DEFAULT_SETTLING_TIME)}
 
-		self._run_servos(self.pin_lookup)
+		self._run_servos(pin_lookup)
 		self.is_init = True
 
 	def queue_turn_page(self):
@@ -132,37 +148,39 @@ class PageTurner():
 			self.init_servo_positions()
 		self.is_init = False
 
+		pin_lookup = {11 : (self.wheel_degrees, DEFAULT_SETTLING_TIME)}
+		self._run_servos(pin_lookup)
+		pin_lookup.clear()
 
-		self.pin_lookup[11] = (self.wheel_degrees, DEFAULT_SETTLING_TIME)
-		self._run_servos(self.pin_lookup)
+		pin_lookup = {9  : (0,   DEFAULT_SETTLING_TIME), \
+					  15 : (75,  DEFAULT_SETTLING_TIME)}
+		self._run_servos(pin_lookup)
+		pin_lookup.clear()
 
+		pin_lookup = {15 : (100, DEFAULT_SETTLING_TIME)}
+		self._run_servos(pin_lookup)
+		pin_lookup.clear()
 
-		self.pin_lookup[9]  = (0,   DEFAULT_SETTLING_TIME)
-		self.pin_lookup[15] = (75,  DEFAULT_SETTLING_TIME)
-		self._run_servos(self.pin_lookup)
+		pin_lookup = {11 : (120, DEFAULT_SETTLING_TIME), \
+					  10 : (130, DEFAULT_SETTLING_TIME), \
+					  14 : (0,   DEFAULT_SETTLING_TIME), \
+					  7  : (0,   DEFAULT_SETTLING_TIME), \
+					  8  : (160, DEFAULT_SETTLING_TIME)}
+		self._run_servos(pin_lookup)
+		pin_lookup.clear()
 
+		pin_lookup = {7  : (100, DEFAULT_SETTLING_TIME), \
+					  8  : (75,  DEFAULT_SETTLING_TIME), \
+					  15 : (90,  DEFAULT_SETTLING_TIME)}
+		self._run_servos(pin_lookup)
+		pin_lookup.clear()
 
-		self.pin_lookup[15] = (100,  DEFAULT_SETTLING_TIME)
-		self._run_servos(self.pin_lookup)
+		pin_lookup = {14 : (180, DEFAULT_SETTLING_TIME), \
+					  10 : (0,   DEFAULT_SETTLING_TIME)}
+		self._run_servos(pin_lookup)
+		pin_lookup.clear()
 
-
-		self.pin_lookup[11] = (120, DEFAULT_SETTLING_TIME)
-		self.pin_lookup[10] = (130, DEFAULT_SETTLING_TIME)
-		self.pin_lookup[14] = (0,   DEFAULT_SETTLING_TIME)
-		self.pin_lookup[7]  = (0,   DEFAULT_SETTLING_TIME)
-		self.pin_lookup[8]  = (160, DEFAULT_SETTLING_TIME)
-		self._run_servos(self.pin_lookup)
-
-
-		self.pin_lookup[7]  = (100, DEFAULT_SETTLING_TIME)
-		self.pin_lookup[8]  = (75,  DEFAULT_SETTLING_TIME)
-		self.pin_lookup[15] = (90,  DEFAULT_SETTLING_TIME)
-		self._run_servos(self.pin_lookup)
-
-
-		self.pin_lookup[14] = (180, DEFAULT_SETTLING_TIME)
-		self.pin_lookup[10] = (0,   DEFAULT_SETTLING_TIME)
-		self._run_servos(self.pin_lookup)
+		self.deinit_all_servo_gpio()
 
 
 # FUNCTIONS
