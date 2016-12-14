@@ -58,7 +58,7 @@ class Device():
 			finally:
 				self._thread_mgr.release_dev_lock(self._dev)
 
-		return False
+		return None
 
 	def ready_to_return(self):
 		''' Checks the designated device's device queue inside the state 

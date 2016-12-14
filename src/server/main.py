@@ -46,7 +46,10 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 		elif self.path == '/pi':
 			content = self._dev_mgr.long_poll(enum.Device.PI)
-			if content == False:
+			if content == None:
+				# Do nothing
+				pass
+			elif content == False:
 				# Send 204 No Content
 				self.send_response(204)
 				self.end_headers()
