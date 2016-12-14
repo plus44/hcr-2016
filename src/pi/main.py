@@ -9,6 +9,7 @@ import sys
 import time
 
 # PYTHON LIBRARIES
+import RPi.GPIO as GPIO
 
 # USER LIBRARIES
 import enum
@@ -16,6 +17,7 @@ from client import RaspberryPiClient
 from page_turner import PageTurner
 
 # GLOBAL VARIABLES
+LIGHTPLATE_PIN = 20
 
 # CLASSES
 class PiStateMachine():
@@ -35,6 +37,30 @@ class PiStateMachine():
 		self.action = 'doNothing'
 		self.is_done_long_polling = False
 		self.turned_page = False
+
+		self.lp_pwm = None
+		self.lp_pwm_val = 100
+		self.init_lightplate_gpio(LIGHTPLATE_PIN, self.lp_pwm_val)
+
+	def __del__(self):
+		''' Destructor for the Pi state machine
+		'''
+		self.lp_pwm.stop()
+		self.deinit_all_gpio()
+
+	def init_lightplate_gpio(self, pin, pwm):
+		''' Initialises the lightplate GPIO pin.
+		'''
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(pin, GPIO.OUT)
+		self.lp_pwm = GPIO.PWM(pin, 50)
+		self.lp_pwm.start(0)
+		self.lp_pwm.ChangeDutyCycle(pwm)
+
+	def deinit_all_gpio(self):
+		''' Deinitialises all GPIO initialised in this program
+		'''
+		GPIO.cleanup()
 
 	def set_client(self, client):
 		''' Set up the internal reference to the client.
@@ -106,6 +132,17 @@ class PiStateMachine():
 				# Go back to long polling
 				self.state = enum.PiState.QUEUE_LONG_POLL
 
+			elif 'setLightplatePwm' in self.action:
+				lst = self.self.action.split(':', 1)
+				try:
+					self.lp_pwm_val = float(lst[1])
+					self.lp_pwm.ChangeDutyCycle(self.lp_pwm_val)
+				except ValueError:
+					print "Couldn't convert lightplatePwm %s to float." % \
+						lst[1]
+				# Go back to long polling
+				self.state = enum.PiState.QUEUE_LONG_POLL
+					
 			else:
 				print "Invalid action received: %s" % self.action
 				# Go back to long polling

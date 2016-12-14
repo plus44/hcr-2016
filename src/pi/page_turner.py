@@ -30,13 +30,16 @@ class PageTurner():
 		self.is_init = False
 		self.wheel_degrees = DEFAULT_WHEEL_DEGREES
 		self.holder_arm_degrees = DEFAULT_HOLDER_ARM_DEGREES
-		self.init_all_servo_gpio()
+		# Not needed for bash version
+		# self.init_all_servo_gpio()
 		self.init_servo_positions()
 
 	def __del__(self):
 		''' Destructor for the page turner. Deinit all servo GPIOs
 		'''
-		self.deinit_all_servo_gpio()
+		# Not needed for bash version
+		# self.deinit_all_servo_gpio()
+		pass
 
 	def _run_servos(self, pin_lookup):
 		''' Runs every servo in the pin lookup table using the src/pi/step_servo.py
@@ -192,8 +195,6 @@ class PageTurner():
 					  10 : (0,   DEFAULT_SETTLING_TIME)}
 		self._run_servos(pin_lookup)
 		pin_lookup.clear()
-
-		self.deinit_all_servo_gpio()
 
 
 # FUNCTIONS
