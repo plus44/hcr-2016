@@ -146,8 +146,8 @@ class PageTurner():
 
 		pin_lookup = {11 : (120, DEFAULT_SETTLING_TIME), \
 					  10 : (130, DEFAULT_SETTLING_TIME), \
-					  14 : (0,   DEFAULT_SETTLING_TIME), \
-					  7  : (0,   DEFAULT_SETTLING_TIME)}
+					  14 : (0,   DEFAULT_SETTLING_TIME)}
+					  # 7  : (0,   DEFAULT_SETTLING_TIME)}
 					  # 8  : (160, DEFAULT_SETTLING_TIME)}
 		self._run_servos(pin_lookup)
 		pin_lookup.clear()
