@@ -12,7 +12,7 @@ import RPi.GPIO as GPIO
 from step_servo import ServoStepThread
 
 # GLOBAL VARIABLES
-DEFAULT_SETTLING_TIME = 1 # second
+DEFAULT_SETTLING_TIME = 1.0 # second
 DEFAULT_WHEEL_DEGREES = 39 # degrees
 DEFAULT_HOLDER_ARM_DEGREES = 100 # degrees
 
@@ -47,12 +47,25 @@ class PageTurner():
 		tim_str = ""
 
 		for pin, tup in pin_lookup.iteritems():
-			pin_str = "%s,%d" % (pin_str, pin)
-			deg_str = "%s,%d" % (deg_str, tup[0])
-			tim_str = "%s,%d" % (tim_str, tup[1])
+			if pin_str != "":
+				pin_str = "%s,%d" % (pin_str, pin)
+			else:
+				pin_str = "%d" % pin
 
-		subprocess.call('src/pi/step_servo.py -p "%s" -d "%s" -t "%s"' % \
-			(pin_str, deg_str, tim_str), shell=True)
+			if deg_str != "":
+				deg_str = "%s,%d" % (deg_str, tup[0])
+			else:
+				deg_str = "%d" % tup[0]
+
+			if tim_str != "":
+				tim_str = "%s,%d" % (tim_str, tup[1])
+			else:
+				tim_str = "%d" % tup[1]
+			
+		call_str = 'src/pi/step_servo.py -p "%s" -d "%s" -t "%s"' % \
+			(pin_str, deg_str, tim_str)
+		print call_str
+		subprocess.call(call_str, shell=True)
 
 	def _run_servos_non_bash(self, pin_lookup):
 		''' Runs every servo in the pin_lookup table that looks like:
