@@ -29,7 +29,7 @@ class PiStateMachine():
 		'''
 		self._client = client
 		self._page_turner = page_turner
-		self.state = enum.PiState.INIT
+		self.state = enum.PiState.QUEUE_LONG_POLL
 
 		self.action = 'doNothing'
 		self.is_done_long_polling = False
