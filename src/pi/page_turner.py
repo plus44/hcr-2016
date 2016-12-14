@@ -29,7 +29,7 @@ class PageTurner():
 		self.is_init = False
 		self.wheel_degrees = DEFAULT_WHEEL_DEGREES
 		self.holder_arm_degrees = DEFAULT_HOLDER_ARM_DEGREES
-		self.init_servos()
+		self.init_servo_positions()
 
 	def _run_servos(self, pin_lookup):
 		''' Runs every servo in the pin_lookup table that looks like:
@@ -47,9 +47,24 @@ class PageTurner():
 		for t in threads:
 			t.join()
 
-		self._deinit_all_gpio()
+	def init_all_servo_gpio(self):
+		''' Initialises the GPIO module and the individual servo pins
+		'''
+		GPIO.setmode(GPIO.BCM)
+		self._init_servo_gpio(9)
+		self._init_servo_gpio(11)
+		self._init_servo_gpio(10)
+		self._init_servo_gpio(14)
+		self._init_servo_gpio(7)
+		self._init_servo_gpio(8)
+		self._init_servo_gpio(15)
 
-	def _deinit_all_gpio(self):
+	def _init_servo_gpio(self,pin):
+		''' Initialises a single servo GPIO pin.
+		'''
+		GPIO.setup(servo_pin, GPIO.OUT)
+
+	def deinit_all_servo_gpio(self):
 		''' Deinitialises all GPIOs
 		'''
 		GPIO.cleanup()
@@ -75,7 +90,7 @@ class PageTurner():
 		''' 
 		return self.holder_arm_degrees
 
-	def init_servos(self):
+	def init_servo_positions(self):
 		''' Takes the servos to their defined starting positions. 
 		'''
 		pin_lookup = {9  : (90,  DEFAULT_SETTLING_TIME), \
@@ -104,8 +119,10 @@ class PageTurner():
 		''' Turns a page using the experimentally adjusted degree values. Calls
 		the state_machine's handler_turned_page() function once done.
 		'''
+		self.init_all_servo_gpio()
+
 		if not self.is_init:
-			self.init_servos()
+			self.init_servo_positions()
 		self.is_init = False
 
 		pin_lookup = {11 : (self.wheel_degrees, DEFAULT_SETTLING_TIME)}
@@ -139,6 +156,8 @@ class PageTurner():
 					  10 : (0,   DEFAULT_SETTLING_TIME)}
 		self._run_servos(pin_lookup)
 		pin_lookup.clear()
+
+		self.deinit_all_servo_gpio()
 
 
 # FUNCTIONS
