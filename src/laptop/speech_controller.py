@@ -17,6 +17,7 @@ class SpeechController():
 		self.r = sr.Recognizer()
 		self.m = sr.Microphone()
 		self.listen_string = ""
+		
 
 	def start_init_seq(self):
 		while not self.done_init_seq:
