@@ -38,25 +38,26 @@ class Device():
 		Returns False if timed out.
 		Returns self.ret_val if actually ready_to_return.
 		'''
-		if self._thread_mgr.acquire_dev_lock(self._dev):
-			try:
-				# Store the current time
-				self.time = time.time()
-				# Do nothing until ready_to_return() is true or timed out
-				while not self.ready_to_return() and \
-					((time.time() - self.time) < constants.LONG_POLL_TIMEOUT):
-					pass
+		# if self._thread_mgr.acquire_dev_lock(self._dev):
+		try:
+			# Store the current time
+			self.time = time.time()
+			# Do nothing until ready_to_return() is true or timed out
+			while not self.ready_to_return() and \
+				((time.time() - self.time) < constants.LONG_POLL_TIMEOUT):
+				pass
 
-				# Check to see if we are actually ready to return or just timed
-				# out.
-				if ((time.time() - self.time) < constants.LONG_POLL_TIMEOUT):
-					return self.ret_val
-				else:
-					print "Long poll timed out."
-					return False
+			# Check to see if we are actually ready to return or just timed
+			# out.
+			if ((time.time() - self.time) < constants.LONG_POLL_TIMEOUT):
+				return self.ret_val
+			else:
+				print "Long poll timed out."
+				return False
 
-			finally:
-				self._thread_mgr.release_dev_lock(self._dev)
+		finally:
+			pass
+				# self._thread_mgr.release_dev_lock(self._dev)
 
 		return None
 
