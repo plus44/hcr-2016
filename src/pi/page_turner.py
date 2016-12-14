@@ -110,7 +110,7 @@ class PageTurner():
 						   8  : (75,  DEFAULT_SETTLING_TIME), \
 						   15 : (90,  DEFAULT_SETTLING_TIME)}
 
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 		self.is_init = True
 
 	def queue_turn_page(self):
@@ -134,16 +134,16 @@ class PageTurner():
 
 
 		self.pin_lookup[11] = (self.wheel_degrees, DEFAULT_SETTLING_TIME)
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 
 
 		self.pin_lookup[9]  = (0,   DEFAULT_SETTLING_TIME)
 		self.pin_lookup[15] = (75,  DEFAULT_SETTLING_TIME)
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 
 
 		self.pin_lookup[15] = (100,  DEFAULT_SETTLING_TIME)
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 
 
 		self.pin_lookup[11] = (120, DEFAULT_SETTLING_TIME)
@@ -151,18 +151,18 @@ class PageTurner():
 		self.pin_lookup[14] = (0,   DEFAULT_SETTLING_TIME)
 		self.pin_lookup[7]  = (0,   DEFAULT_SETTLING_TIME)
 		self.pin_lookup[8]  = (160, DEFAULT_SETTLING_TIME)
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 
 
 		self.pin_lookup[7]  = (100, DEFAULT_SETTLING_TIME)
 		self.pin_lookup[8]  = (75,  DEFAULT_SETTLING_TIME)
 		self.pin_lookup[15] = (90,  DEFAULT_SETTLING_TIME)
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 
 
 		self.pin_lookup[14] = (180, DEFAULT_SETTLING_TIME)
 		self.pin_lookup[10] = (0,   DEFAULT_SETTLING_TIME)
-		self._run_servos(pin_lookup)
+		self._run_servos(self.pin_lookup)
 
 
 # FUNCTIONS
