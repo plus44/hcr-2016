@@ -153,15 +153,33 @@ class Laptop(Device):
 
 		# 'State' machine mode of laptop
 		if p_json["doneProcessing"] == True and \
-			p_json["error"] == "None":
+			p_json["error"] == "None" and \
+			not p_json["isFirstStart"]:
 			# Tell the Raspberry Pi to turn the page.
 			self._state_mgr.push_to_queue(enum.Device.PI, "turnPage")
 			print "Successfully processed and spoke everything on the laptop."
+		
+		elif p_json["doneProcessing"] == True and \
+			p_json["error"] == "None" and \
+			p_json["isFirstStart"]:
+
+			print "Clearing queues."
+			# Clear all device queues:
+			self._state_mgr.clear_queue(enum.Device.PHONE)
+			self._state_mgr.clear_queue(enum.Device.LAPTOP)
+			self._state_mgr.clear_queue(enum.Device.PI)
+
+			# Tell the phone to take an image.
+			self._state_mgr.push_to_queue(enum.Device.PHONE, "takePicture")
+		
 		elif p_json["error"] != "None":
 			# Tell the laptop to retry.
 			self._state_mgr.push_to_queue(enum.Device.LAPTOP, "retry")
 			print "Received error: %s from laptop." % p_json["error"]
 			print "Retrying laptop operations."
+		else: 
+			print "Received weird JSON combo from laptop."
+			print p_json
 
 class DeviceManager():
 	''' Container/wrapper class for the trio of devices.

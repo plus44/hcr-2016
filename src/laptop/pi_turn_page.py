@@ -21,6 +21,7 @@ def main(host, port):
 	server on host:port.
 	'''
 	client = LaptopClient(host, port=port)
+	client.set_first_start(False)
 	if client.post_success():
 		print "Successfully told Raspberry Pi to turn page."
 	

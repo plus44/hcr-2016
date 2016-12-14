@@ -31,11 +31,19 @@ class LaptopClient():
 		self._state_machine = state_machine
 		self.post_req = {'doneProcessing' : False, \
 						 'error' : 'NotInitialized', \
-						 'piExtraAction' : 'doNothing',
-						 'phoneExtraAction' : 'doNothing'}
+						 'piExtraAction' : 'doNothing', \
+						 'phoneExtraAction' : 'doNothing', \
+						 'isFirstStart' : True}
 		self.conn = httplib.HTTPConnection(self._host, self._port)
 		self.is_long_polling = False
+		self.is_first_start = True
 		self.decoded_image = ""
+
+	def set_first_start(self, start):
+		''' Sets the first start to 'start'. If 'start' is true, server will
+		not queue a page turn before asking for an image.
+		'''
+		self.is_first_start = start
 
 	def queue_long_poll(self):
 		''' Queues a long-poll to the server on a background thread. When the 
@@ -84,6 +92,7 @@ class LaptopClient():
 		self.post_req['error'] = 'None'
 		self.post_req['piExtraAction'] = 'setWheelDegrees:%s' % degrees
 		self.post_req['phoneExtraAction'] = 'doNothing'
+		self.post_req['isFirstStart'] = self.is_first_start
 		return self._do_post_request()
 
 	def post_pi_set_holder_arm_degrees(self, degrees):
@@ -96,6 +105,7 @@ class LaptopClient():
 		self.post_req['error'] = 'None'
 		self.post_req['piExtraAction'] = 'setHolderArmDegrees:%s' % degrees
 		self.post_req['phoneExtraAction'] = 'doNothing'
+		self.post_req['isFirstStart'] = self.is_first_start
 		return self._do_post_request()
 
 	def post_success(self):
@@ -109,6 +119,7 @@ class LaptopClient():
 		self.post_req['error'] = 'None'
 		self.post_req['piExtraAction'] = 'doNothing'
 		self.post_req['phoneExtraAction'] = 'doNothing'
+		self.post_req['isFirstStart'] = self.is_first_start
 		return self._do_post_request()
 
 	def post_failure(self, error):
@@ -121,6 +132,7 @@ class LaptopClient():
 		self.post_req['error'] = error
 		self.post_req['piExtraAction'] = 'doNothing'
 		self.post_req['phoneExtraAction'] = 'doNothing'
+		self.post_req['isFirstStart'] = self.is_first_start
 		return self._do_post_request()
 
 	def _do_post_request(self):

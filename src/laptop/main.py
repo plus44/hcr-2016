@@ -41,8 +41,10 @@ class GlobalStateMachine():
 		self.is_done_long_polling = False
 		self.extracted_string = ""
 		self.done_extracting_text = False
-		self.done_speaking_text = False
+		self.done_telling_story = False
+		self.done_init_speech = False
 		self.error = 'None'
+		self.first_start = True
 
 	def handler_done_long_polling(self, image):
 		''' Handler that gets called by the client whenever long-polling has a
@@ -60,20 +62,22 @@ class GlobalStateMachine():
 		''' Handler that gets called by the OCR whenever it has finished 
 		extracting text from a string.
 		'''
-		self.extracted_string = text
+		self.extracted_string = text.encode('utf-8')
 		self.done_extracting_text = True
-		print "Extracted text: %s" % self.extracted_string.encode('utf-8')
+		print "Extracted text: %s" % self.extracted_string
 
 	def handler_told_story(self):
 		''' Handler that gets called by the gesture controller whenever it has
 		finished telling the story it was queued to say.
 		'''
+		self.done_telling_story = True
 		print "Finished telling story."	
 
 	def handler_speech_done_init_seq(self):
 		''' Handler that gets called by the speech controller whenever it has 
 		finished doing the initial interaction.
 		'''
+		self.done_init_speech = True
 		print "Finished speech interaction initialisation sequence."
 
 	def set_client(self, client):
@@ -115,12 +119,31 @@ class GlobalStateMachine():
 			self.state = enum.State.REQUEST_IMAGE
 			return
 
+		elif self.state == enum.State.QUEUE_INIT_SPEECH:
+			self._speech_controller.start_init_seq()
+			self.state = enum.State.WAIT_FOR_INIT_SPEECH
+			return
+
+		elif self.state == enum.State.WAIT_FOR_INIT_SPEECH:
+			if self.done_init_speech:
+				self.done_init_speech = False
+				self.state = enum.State.REQUEST_IMAGE
+			return
+
 		elif self.state == enum.State.REQUEST_IMAGE:
+			self._client.set_first_start(self.first_start)
+
+			print "Successfully set first start to: %s" % self.first_start
 			if self.error == 'None':
 				self._client.post_success()
 			else:
 				self._client.post_failure(self, self.error)
 			self.state = enum.State.QUEUE_LONG_POLL
+
+			# First start should only be true the first time we post to server
+			if self.first_start:
+				self.first_start = False
+
 			return
 
 		elif self.state == enum.State.QUEUE_LONG_POLL:
@@ -148,7 +171,7 @@ class GlobalStateMachine():
 			# OCR has finished
 			if self.done_extracting_text:
 				self.done_extracting_text = False
-				self.state = enum.State.SPEAK_TEXT
+				self.state = enum.State.QUEUE_TELL_STORY
 			return
 
 		elif self.state == enum.State.QUEUE_TELL_STORY:
@@ -158,8 +181,8 @@ class GlobalStateMachine():
 			return
 
 		elif self.state == enum.State.WAIT_FOR_STORY:
-			if self.done_speaking_text:
-				self.done_speaking_text = False
+			if self.done_telling_story:
+				self.done_telling_story = False
 				# Go back to requesting an image
 				self.state = enum.State.REQUEST_IMAGE
 			return
@@ -177,7 +200,8 @@ def main(host, port, robot_ip, robot_port):
 	state_machine = GlobalStateMachine()
 	client = LaptopClient(host, port=port, state_machine=state_machine)
 	ocr = OCRController(state_machine=state_machine)
-	gesture_controller = GestureController(state_machine=state_machine)
+	gesture_controller = GestureController(robot_ip, robot_port, \
+		state_machine=state_machine)
 	speech_controller = SpeechController(gesture_controller, \
 		state_machine=state_machine)
 
@@ -198,7 +222,7 @@ def main(host, port, robot_ip, robot_port):
 	# with open('photo/latest.jpeg', 'wb') as fh:
 	# 	fh.write(picture.decode('base64'))
 
-def parse_host_and_port(args=None):
+def parse_hosts_and_ports(args=None):
 	''' Returns a tuple of the parsed address and port arguments from the 
 	command line
 	'''
@@ -233,8 +257,8 @@ def parse_host_and_port(args=None):
 
 # CODE
 if __name__ == '__main__':
-	host, port = parse_host_and_port(sys.argv[1:])
-	main(host, port)
+	host, port, robot_ip, robot_port = parse_hosts_and_ports(sys.argv[1:])
+	main(host, port, robot_ip, robot_port)
 else:
 	print "Run main.py from __main__."
 

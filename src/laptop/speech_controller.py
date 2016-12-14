@@ -64,6 +64,8 @@ class SpeechController():
 			#gestureController.animatedSpeechProxy.say(response)
 			if response == None:
 				self.n = self.n - 1
+				self._gesture_controller.animatedSay("Sorry, I did not catch that, could you please repeat?")
+
 			self.init_state = enum.SpeechState.WAIT_FOR_RESPONSE
 			return
 
@@ -115,16 +117,18 @@ class SpeechController():
 		#print "[n = %d] MY_DICT: %s" % (n, my_dict)
 		#print "var1 = %s" % var1
 		#print "n = %d"  % n
-		ret = None
+		ret = ""
+		funct_dict = {}
 		for keyword, funct in my_dict.iteritems():
 			print "var1: %s, keyword: %s, find: %d" % (var1, keyword, var1.find(keyword))
 			if var1.find(keyword) >= 0:
-				ret = funct
-				return ret
-				# if n == 1:
-				# 	return (self.describe_exp())
-				# if n == 2:
-				# 	return (self.ok_vol())
+				funct_dict[keyword] = funct
+
+		if 'you' in funct_dict:
+			ret = funct_dict['you']
+		elif len(funct_dict) > 0:
+			ret = funct_dict.itervalues().next()
+
 		return ret
 
 	def ask_user(self):

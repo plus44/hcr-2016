@@ -13,6 +13,7 @@ import time
 # USER LIBRARIES
 import enum
 from client import RaspberryPiClient
+from page_turner import PageTurner
 
 # GLOBAL VARIABLES
 
@@ -29,7 +30,7 @@ class PiStateMachine():
 		'''
 		self._client = client
 		self._page_turner = page_turner
-		self.state = enum.PiState.INIT
+		self.state = enum.PiState.QUEUE_LONG_POLL
 
 		self.action = 'doNothing'
 		self.is_done_long_polling = False
@@ -117,6 +118,7 @@ class PiStateMachine():
 			return
 
 		elif self.state == enum.PiState.WAIT_FOR_PAGE_TURN:
+			print "Got to state WAIT_FOR_PAGE_TURN"
 			if self.turned_page:
 				self.turned_page = False
 				print "Posting success server: %s" % self._client.post_success()

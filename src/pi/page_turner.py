@@ -3,14 +3,16 @@
 '''
 
 # STANDARD PYTHON IMPORTS
+import subprocess
 
 # PYTHON LIBRARIES
+import RPi.GPIO as GPIO
 
 # USER LIBRARIES
 from step_servo import ServoStepThread
 
 # GLOBAL VARIABLES
-DEFAULT_SETTLING_TIME = 1 # second
+DEFAULT_SETTLING_TIME = 1.0 # second
 DEFAULT_WHEEL_DEGREES = 39 # degrees
 DEFAULT_HOLDER_ARM_DEGREES = 100 # degrees
 
@@ -28,9 +30,44 @@ class PageTurner():
 		self.is_init = False
 		self.wheel_degrees = DEFAULT_WHEEL_DEGREES
 		self.holder_arm_degrees = DEFAULT_HOLDER_ARM_DEGREES
-		self.init_servos()
+		self.init_all_servo_gpio()
+		self.init_servo_positions()
+
+	def __del__(self):
+		''' Destructor for the page turner. Deinit all servo GPIOs
+		'''
+		self.deinit_all_servo_gpio()
 
 	def _run_servos(self, pin_lookup):
+		''' Runs every servo in the pin lookup table using the src/pi/step_servo.py
+		bash script.
+		'''
+		pin_str = ""
+		deg_str = ""
+		tim_str = ""
+
+		for pin, tup in pin_lookup.iteritems():
+			if pin_str != "":
+				pin_str = "%s,%d" % (pin_str, pin)
+			else:
+				pin_str = "%d" % pin
+
+			if deg_str != "":
+				deg_str = "%s,%d" % (deg_str, tup[0])
+			else:
+				deg_str = "%d" % tup[0]
+
+			if tim_str != "":
+				tim_str = "%s,%d" % (tim_str, tup[1])
+			else:
+				tim_str = "%d" % tup[1]
+			
+		call_str = 'src/pi/step_servo.py -p "%s" -d "%s" -t "%s"' % \
+			(pin_str, deg_str, tim_str)
+		print call_str
+		subprocess.call(call_str, shell=True)
+
+	def _run_servos_non_bash(self, pin_lookup):
 		''' Runs every servo in the pin_lookup table that looks like:
 			{ pin : (degrees, settling_time) }
 		'''
@@ -46,7 +83,29 @@ class PageTurner():
 		for t in threads:
 			t.join()
 
-		t[0].deinit_all_gpio()
+	def init_all_servo_gpio(self):
+		''' Initialises the GPIO module and the individual servo pins
+		'''
+		self._init_servo_gpio(9)
+		self._init_servo_gpio(11)
+		self._init_servo_gpio(10)
+		self._init_servo_gpio(14)
+		self._init_servo_gpio(7)
+		self._init_servo_gpio(8)
+		self._init_servo_gpio(15)
+		print "Successfully init all servo GPIO"
+
+	def _init_servo_gpio(self,pin):
+		''' Initialises a single servo GPIO pin.
+		'''
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(pin, GPIO.OUT)
+
+	def deinit_all_servo_gpio(self):
+		''' Deinitialises all GPIOs
+		'''
+		GPIO.cleanup()
+		print "Successfully deinit all servo GPIO"
 
 	def set_wheel_degrees(self, wheel_degrees):
 		''' Sets the wheel degrees value, usually passed from the server through
@@ -69,7 +128,7 @@ class PageTurner():
 		''' 
 		return self.holder_arm_degrees
 
-	def init_servos(self):
+	def init_servo_positions(self):
 		''' Takes the servos to their defined starting positions. 
 		'''
 		pin_lookup = {9  : (90,  DEFAULT_SETTLING_TIME), \
@@ -99,7 +158,7 @@ class PageTurner():
 		the state_machine's handler_turned_page() function once done.
 		'''
 		if not self.is_init:
-			self.init_servos()
+			self.init_servo_positions()
 		self.is_init = False
 
 		pin_lookup = {11 : (self.wheel_degrees, DEFAULT_SETTLING_TIME)}
@@ -133,6 +192,8 @@ class PageTurner():
 					  10 : (0,   DEFAULT_SETTLING_TIME)}
 		self._run_servos(pin_lookup)
 		pin_lookup.clear()
+
+		self.deinit_all_servo_gpio()
 
 
 # FUNCTIONS
