@@ -62,7 +62,7 @@ class PageTurner():
 		''' Initialises a single servo GPIO pin.
 		'''
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(servo_pin, GPIO.OUT)
+		GPIO.setup(pin, GPIO.OUT)
 
 	def deinit_all_servo_gpio(self):
 		''' Deinitialises all GPIOs
