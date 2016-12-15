@@ -1,0 +1,61 @@
+# Choregraphe simplified export in Python.
+from naoqi import ALProxy
+names = list()
+times = list()
+keys = list()
+
+names.append("LElbowRoll")
+times.append([1.64])
+keys.append([-1.54316])
+
+names.append("LElbowYaw")
+times.append([1.64])
+keys.append([-0.719487])
+
+names.append("LHand")
+times.append([1.64])
+keys.append([0.314])
+
+names.append("LShoulderPitch")
+times.append([1.64])
+keys.append([-0.0123138])
+
+names.append("LShoulderRoll")
+times.append([1.64])
+keys.append([0.260738])
+
+names.append("LWristYaw")
+times.append([1.64])
+keys.append([-0.515466])
+
+names.append("RElbowRoll")
+times.append([1.64])
+keys.append([1.54462])
+
+names.append("RElbowYaw")
+times.append([1.64])
+keys.append([0.619695])
+
+names.append("RHand")
+times.append([1.64])
+keys.append([0.3848])
+
+names.append("RShoulderPitch")
+times.append([1.64])
+keys.append([-0.0966001])
+
+names.append("RShoulderRoll")
+times.append([1.64])
+keys.append([-0.265424])
+
+names.append("RWristYaw")
+times.append([1.64])
+keys.append([0.602821])
+
+try:
+  # uncomment the following line and modify the IP if you use this script outside Choregraphe.
+  # motion = ALProxy("ALMotion", IP, 9559)
+  motion = ALProxy("ALMotion")
+  motion.angleInterpolation(names, keys, times, True)
+except BaseException, err:
+  print err

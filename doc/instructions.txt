@@ -1,0 +1,27 @@
+-------TO RUN MAIN SCRIPT-------
+
+cd hcr-2016 [1] [2] [3]
+ssh -i hcr-2016.pem ec2-user@<<server_address (NO http://)>> [1]
+source ~/venvs/hcr-2016/bin/activate [2]
+
+GET THE RASPBERRY PI ADDRESS FROM: https://github.com/plus44/RPi-IP/blob/master/ip.txt
+ssh pi@<<raspi_address>> (password: pinaoqio) [3]
+
+ON SERVER:
+cd hcr-2016 [1]
+python src/server/main.py -p 80 [1]
+
+ON PI:
+cd hcr-2016 [3]
+python src/pi/main.py -H <<server_address (NO http://)>> -p 80 [3]
+
+ON LAPTOP:
+python src/laptop/main.py -H <<server_address (NO http://)>> -p 80 -ri <<robot_ip>> -rp <<robot_port>> [2]
+
+-------TO SEND TURN PAGE COMMANDS:-------
+ON LAPTOP:
+python src/laptop/pi_turn_page.py -H <<server_address (NO http://)>> -p 80 [2/4]
+
+-------TO SET WHEEL DEGREES:--------
+ON LAPTOP:
+python src/laptop/pi_set_wheel_degrees.py -H <<server_address (NO http://)>> -p 80 -d <<degrees (max 180)>>
