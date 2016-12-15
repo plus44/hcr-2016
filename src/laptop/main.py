@@ -116,7 +116,7 @@ class GlobalStateMachine():
 		'''
 		if self.state == enum.State.INIT:
 			self.perform_init_sequence()
-			self.state = enum.State.REQUEST_IMAGE
+			self.state = enum.State.QUEUE_INIT_SPEECH
 			return
 
 		elif self.state == enum.State.QUEUE_INIT_SPEECH:

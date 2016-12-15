@@ -1008,7 +1008,7 @@ def main(robotIP,robotPort):
     #ALProxy("ALTextToSpeech", robotIP, robotPort).setParameter("pitchShift", 1)
 
      # Set Voice Parameters
-    ttsProxy.setParameter("speed", 80)
+    #ttsProxy.setParameter("speed", 80)
     #ttsProxy.setParameter("pitchShift", 1.0)
     # ttsProxy.setParameter("doubleVoice", 1)
     #ttsProxy.setVolume(1)
@@ -1018,20 +1018,20 @@ def main(robotIP,robotPort):
     # ttsProxy.setVoice("naoenu")
     
     # Turn on the Motors
-    motionProxy.wakeUp()
+    #motionProxy.wakeUp()
     
     #StandUp
-    StandUp(postureProxy)
+    #StandUp(postureProxy)
     
 
 
     # Set I have no ideaed, 1:random, 2:contextual 
-    animatedSpeechProxy.setBodyLanguageMode(0)
-    for i in rePassage:
-        if i in custom_gesture_map:
-            custom_gesture_map[i](i, motionProxy, animatedSpeechProxy, ledProxy)
-        else:
-            animatedSpeechProxy.say(i)        
+    # animatedSpeechProxy.setBodyLanguageMode(0)
+    # for i in rePassage:
+    #     if i in custom_gesture_map:
+    #         custom_gesture_map[i](i, motionProxy, animatedSpeechProxy, ledProxy)
+    #     else:
+    #         animatedSpeechProxy.say(i)        
     #animatedSpeechProxy.say("^start(animations\Stand\Gestures\No_1) I am doing a gesture ^wait(animations\Stand\Gestures\No_1)")
 
 
@@ -1042,8 +1042,8 @@ def main(robotIP,robotPort):
 if __name__ == "__main__":
     # robotIp = "169.254.44.123" #Set a default IP here
     # robotPort = 9559           #Set default POort here
-    robotPort = 42804
-    robotIp = "127.0.0.1"
+    robotPort = 9559
+    robotIp = "169.254.44.123"
 
 
 

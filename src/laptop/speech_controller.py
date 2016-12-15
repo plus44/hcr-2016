@@ -43,7 +43,7 @@ class SpeechController():
 
 		if self.init_state == enum.SpeechState.WAIT_FOR_RESPONSE:
 			self.n += 1
-			if self.n >= 5:
+			if self.n >= 4:
 				self.init_state = enum.SpeechState.DONE
 				return
 
@@ -165,12 +165,12 @@ class SpeechController():
 					"ok" : self.ok_speed(),\
 					"fine" : self.ok_speed(),\
 					}
-		if n == 4:
-			return {"ok" : self.start_read(),\
-					"alright" : self.start_read(),\
-					"fine" : self.start_read(),\
-					"sure" : self.start_read(),\
-					}
+		# if n == 4:
+		# 	return {"ok" : self.start_read(),\
+		# 			"alright" : self.start_read(),\
+		# 			"fine" : self.start_read(),\
+		# 			"sure" : self.start_read(),\
+		# 			}
 	def ask_user(self):
 		return("Hey! My name is Pinaoqio, how are you?") 	
 	
@@ -200,11 +200,11 @@ class SpeechController():
 		return("Alright, I have decreased the speed. I am now ready to read you a story! Please say ok when you are ready!")
 
 	def ok_speed(self):
-		return("Perfect. I am now ready to read you a story! Could you say ok when you are ready!")
+		return("Perfect. I am now ready to read the a story! I will take a picture of the book to process its text, sorry for the wait!")
 
-	def start_read(self):
-		#start reading
-		return("starting")
+	# def start_read(self):
+	# 	#start reading
+	# 	return("starting")
 
 	# def listen_while_reading()
 	# 	print("A moment of silence, please...")

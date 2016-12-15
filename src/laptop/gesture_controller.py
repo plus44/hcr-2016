@@ -13,6 +13,8 @@ from naoqi import ALProxy
 # USER LIBRARIES
 
 # GLOBAL VARIABLES
+OVERRIDE = 6
+should_set_random_gestures = True
 
 # CLASSES
 class GestureController():
@@ -56,31 +58,50 @@ class GestureController():
 		self.ttsProxy.setVolume(0.75)
 		self.ttsProxy.setParameter("speed", 80)
 
-
-	def tell_story(self, InString):
-		processedStory = self.dictSearch(InString)[0]
-		print processedStory
-
-		customGestureDict = self.init_gesture_dictionary()
-		#print customGestureDict[3]
-		
 		# Turn on the Motors
 		self.motionProxy.wakeUp()
 		
 		# #StandUp
 		self.StandUp()
-		
+
+	def __del__(self):
+		# Turn off the Motors
+		self.motionProxy.rest()
+
+	def tell_story(self, InString):
+		string_to_use = ""
+
+		if OVERRIDE == 0:
+			string_to_use = "It was at that precise moment, as their eyes met in the cinema, that Billy felt he had met this man before, not on screen, but face to face. And when Hitler raised his hand and brushed his hair back from his forehead, he knew at once who it was, and where they had met, and remembered everything that had happened between them. Christine clutched his arm, looking away from the screen, then buried her head in Billy's shoulder. Billy realised that everyone in that cinema was feeling as she did. It was fear, the kind that gripped your body and soul and wouldn't leave you. No one whistled any more, no one hooted, no one laughed. It was as if everyone in the cinema was holding their breath, waiting for what was to come, dreading the horror of it, but knowing that there was nothing that could stop it, because this man, this Hitler, was going to make it happen. But Billy knew more. All the while Billy looked up into his eyes, and could not look away. All the while he was wondering if what had come into his mind could possibly be true. The more he looked into those eyes, the more he realised that it was, that there could be no doubt about it. That man, that warmonger, was up there now, able to spew out his hatred only because Billy had spared his life all those years before, after the Battle of Marcoing."
+		elif OVERRIDE == 1:
+			self.StandUp()
+			string_to_use = "Then, somewhere, a dog started barking. The eagle lifted off, lumbering into the air, the hare limp in his talons. A dog was bounding down through the snow towards the eagle, towards Billy, hackles up. It was a huge Alsatian, his bark and his growl fearsome, intimidating. That was when Billy looked up, and saw Hitler, in his peaked cap and his long black coat. He was still some way away. He was strolling down the road, and there were six or seven other men, all of them in black uniforms, two of them readying their rifles. Everything was happening so fast and not at all as Billy had expected it. But he kept his head. The dog would not stop him. The sight of the raised rifles would not stop him. He was going to do it. He had to. This was the opportunity he had waiting for all this time."
+		else:
+			string_to_use = InString
+
 		# # Set body language mode: 0:disabled, 1:random, 2:contextual 
-		self.animatedSpeechProxy.setBodyLanguageMode(0)
+		if should_set_random_gestures:
+			self.animatedSpeechProxy.setBodyLanguageMode(2)
+		else:
+			self.animatedSpeechProxy.setBodyLanguageMode(0)
+	
+
+
+		processedStory = self.dictSearch(string_to_use)[0]
+		print processedStory
+
+		customGestureDict = self.init_gesture_dictionary()
+		#print customGestureDict[3]
 		
+				
+				
 		for i in processedStory:
 			if i in customGestureDict:
 				customGestureDict[i](i)
 			else:
 				self.animatedSpeechProxy.say(i)        
 
-		# Turn off the Motors
-		self.motionProxy.rest()
+		
 
 		# Tell the state machine we're done telling the story.
 		if self._state_machine != None:
