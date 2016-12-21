@@ -1,7 +1,7 @@
 # Human-Centred Robotics 2016
 
-## Xavier Laguerta-Soler, Periklis Korkontzelos, Nathan Warner, Mihnea Rusu
-## {xl5512, pk1913, njw13, mr3313}@ic.ac.uk
+##### Xavier Laguerta-Soler, Periklis Korkontzelos, Nathan Warner, Mihnea Rusu
+##### {xl5512, pk1913, njw13, mr3313}@ic.ac.uk
 
 Our project is about building an interactive story-telling robot that reads (and turns the pages of) physical books to children :baby:. Our robot **PiNAOqio** uses the [NAO robot](https://www.ald.softbankrobotics.com/en/cool-robots/nao) from SoftBank Robotics to interact with the reader through speech and gestures. An additional hardware rig was designed and built to turn the pages of books and to accommodate a camera for capturing the open leaf. 
 
