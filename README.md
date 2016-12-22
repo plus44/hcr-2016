@@ -28,7 +28,7 @@ This repository is composed of the following directories:
 
 Link to the Python library used for [speech](https://pypi.python.org/pypi/SpeechRecognition/), which is not included in our virtual environment requirements file due to platform mish-mash :disappointed:.
 
-Quick links:
+### Quick links:
   - [Design Report](docs/reports/design-report.pdf)
   - [Final Report](docs/reports/final-report.pdf)
 
