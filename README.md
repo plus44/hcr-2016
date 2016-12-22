@@ -21,6 +21,7 @@ This repository is composed of the following directories:
   - **[app](app)** iOS app source code and Carthage dependencies.
   - **[docs](docs)** System startup documentation and reports written for this project (including the individual reports).
   - **[eval](eval)** Evaluation questionnaires handed out to the participants of our study and a Matlab script to determine the results of our experiment.
+  - **[hardware](hardware)** Laser cutting files for the page-turner.
   - **[scripts](scripts)** A number of useful, but maybe messier scripts for quick or intermediate testing.
   - **[sdk](sdk)** The correct version of the NAOqi SDK that works with Python.
   - **[src](src)** Source code (in Python) for all individual elements of the system, along with a pip requirements file for setting up (a partially working) virtual environment. Each component is meant to have a copy of its respective subdirectory. The [phone](src/phone) component is only a networking-enabled dummy, as the real phone component is the iOS app.
