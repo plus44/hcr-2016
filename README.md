@@ -14,7 +14,7 @@ The full system is comprised of the following components: a laptop :computer: to
 
 Ultimately the project was a success :clap: - the high-risk components namely the page-turning mechanism and OCR functioned to a high standard and the results of our research suggested the proposed hypotheses :+1:.
 
-## Presentation Video
+## Presentation Video :video_camera:
 [![PiNAOqio Video](https://img.youtube.com/vi/8CyoGCQ_uKY/0.jpg)](https://www.youtube.com/watch?v=8CyoGCQ_uKY)
 
 ## Contents
