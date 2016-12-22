@@ -14,6 +14,9 @@ The full system is comprised of the following components: a laptop :computer: to
 
 Ultimately the project was a success :clap: - the high-risk components namely the page-turning mechanism and OCR functioned to a high standard and the results of our research suggested the proposed hypotheses :+1:.
 
+## Presentation Video
+[![PiNAOqio Video](https://img.youtube.com/vi/8CyoGCQ_uKY/0.jpg)](https://www.youtube.com/watch?v=8CyoGCQ_uKY)
+
 ## Contents
 
 This repository is composed of the following directories:
@@ -26,6 +29,4 @@ This repository is composed of the following directories:
   - **[photo](photo)** Test photographs of various book poses and lightings (for OCR) taken throughout the course of our project, along with a dedicated file, *[latest.jpeg](photo/latest.jpeg)*, that the laptop client updates while it's running, with fresh images received from the phone.
 
 Link to the Python library used for [speech](https://pypi.python.org/pypi/SpeechRecognition/), which is not included in our virtual environment requirements file due to platform mish-mash :disappointed:.
-
-Link to the [video](https://en.wikipedia.org/wiki/HTTP_404).
 
