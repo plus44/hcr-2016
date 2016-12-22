@@ -4,7 +4,8 @@
 ##### {xl5512, pk1913, njw13, mr3313}@ic.ac.uk
 ##### *Imperial College London*
 
-![PiNAOqio Page Turner](photo/project/page-turner.jpg)
+[![PiNAOqio Page Turner](photo/project/page-turner.jpg)](https://www.youtube.com/watch?v=8CyoGCQ_uKY)
+Video :video_camera: link: https://www.youtube.com/watch?v=8CyoGCQ_uKY
 
 Our project is about building an interactive story-telling robot that reads (and turns the pages of) physical books to children :baby:. Our robot, **PiNAOqio**, uses the [NAO robot](https://www.ald.softbankrobotics.com/en/cool-robots/nao) from SoftBank Robotics to interact with the reader through speech and gestures. An additional hardware rig was designed and built to turn the pages of books and to accommodate a camera for capturing the open leaf. 
 
@@ -13,9 +14,6 @@ As this was first and foremost a research project, we set out to test the hypoth
 The full system is comprised of the following components: a laptop :computer: to interface with NAO, the robot, and to perform optical character recognition (OCR) on the picture of the book; a Raspberry Pi to control the page-turning mechanism; an iPhone :iphone: (6 or higher) to photograph the open book, and a server on the cloud to enable communication between the different platforms. As will be apparent to the reader, our system architecture ended up being quite different (and more complex) in the final report to what we initially envisioned in the design report, mainly due to complications with the OCR setup.
 
 Ultimately the project was a success :clap: - the high-risk components namely the page-turning mechanism and OCR functioned to a high standard and the results of our research suggested the proposed hypotheses :+1:.
-
-## Presentation Video :video_camera:
-[![PiNAOqio Video](https://img.youtube.com/vi/8CyoGCQ_uKY/0.jpg)](https://www.youtube.com/watch?v=8CyoGCQ_uKY)
 
 ## Contents
 
